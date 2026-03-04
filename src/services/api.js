@@ -1,5 +1,5 @@
 // API configuration
-const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:8000'
+const API_BASE = import.meta.env.VITE_API_BASE || 'https://financial-calculations-api.onrender.com'
 
 /**
  * Make API request with error handling
