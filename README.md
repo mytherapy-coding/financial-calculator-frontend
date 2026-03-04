@@ -123,6 +123,41 @@ The app uses CSS modules. Each component has its own CSS file. The design follow
 - Responsive grid layouts
 - Accessible color contrasts
 
+## Deployment
+
+### GitHub Pages
+
+This project is configured for automatic deployment to GitHub Pages.
+
+**Live Site:** https://mytherapy-coding.github.io/financial-calculator-frontend/
+
+**Setup Instructions:**
+
+1. **Enable GitHub Pages** in your repository settings:
+   - Go to Settings → Pages
+   - Source: Select "GitHub Actions"
+
+2. **Configure API URL** (optional):
+   - The app defaults to `http://localhost:8000` for local development
+   - For production, set the `VITE_API_BASE` secret in GitHub:
+     - Go to Settings → Secrets and variables → Actions
+     - Add a new secret: `VITE_API_BASE` with your API URL (e.g., `https://your-api.onrender.com`)
+
+3. **Automatic Deployment:**
+   - Every push to `main` branch automatically triggers deployment
+   - The workflow builds the app and deploys to GitHub Pages
+   - Check the Actions tab to see deployment status
+
+**Manual Deployment:**
+
+```bash
+# Build the project
+npm run build
+
+# The dist folder contains the production build
+# GitHub Actions will automatically deploy it
+```
+
 ## License
 
 See LICENSE file for details.
