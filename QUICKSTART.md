@@ -1,70 +1,70 @@
 # Quick Start Guide
 
-## Установка и запуск
+## Installation and Setup
 
 ```bash
-# Установить зависимости
+# Install dependencies
 npm install
 
-# Запустить dev сервер
+# Start dev server
 npm run dev
 ```
 
-Приложение откроется автоматически на `http://localhost:3000`
+The app will automatically open at `http://localhost:3000`
 
-## Подключение к Backend API
+## Backend API Connection
 
-По умолчанию фронтенд подключается к `http://localhost:8000`.
+By default, the frontend connects to `http://localhost:8000`.
 
-Если ваш API работает на другом адресе, создайте файл `.env`:
+If your API runs on a different address, create a `.env` file:
 
 ```bash
 VITE_API_BASE=http://your-api-url.com
 ```
 
-## Что было создано
+## What Was Created
 
-✅ **React + Vite** - современный стек для разработки
-✅ **Mortgage Calculator** - полный калькулятор ипотеки с графиками
+✅ **React + Vite** - modern development stack
+✅ **Mortgage Calculator** - full mortgage calculator with charts
 ✅ **TVM Calculators** - Future Value, Present Value, Annuity Payment
-✅ **Интерактивные графики** - Pie charts и Line charts с Recharts
-✅ **Красивый UI** - дизайн в стиле mortgagecalculator.org
-✅ **Responsive дизайн** - работает на всех устройствах
+✅ **Interactive Charts** - Pie charts and Line charts with Recharts
+✅ **Beautiful UI** - design inspired by mortgagecalculator.org
+✅ **Responsive Design** - works on all devices
 
-## Структура проекта
+## Project Structure
 
 ```
 src/
 ├── components/
-│   ├── Header.jsx              # Шапка сайта
-│   ├── Navigation.jsx               # Навигация между калькуляторами
-│   ├── MortgageCalculator.jsx      # Калькулятор ипотеки
-│   ├── TVMCalculator.jsx          # TVM калькуляторы
-│   ├── PaymentBreakdownChart.jsx  # График разбивки платежей
-│   └── AmortizationChart.jsx      # График амортизации
+│   ├── Header.jsx              # Site header
+│   ├── Navigation.jsx               # Navigation between calculators
+│   ├── MortgageCalculator.jsx      # Mortgage calculator
+│   ├── TVMCalculator.jsx          # TVM calculators
+│   ├── PaymentBreakdownChart.jsx  # Payment breakdown chart
+│   └── AmortizationChart.jsx      # Amortization chart
 ├── services/
-│   └── api.js                    # API сервис для работы с backend
-├── App.jsx                       # Главный компонент
-└── main.jsx                    # Точка входа
+│   └── api.js                    # API service for backend communication
+├── App.jsx                       # Main component
+└── main.jsx                    # Entry point
 ```
 
-## Особенности
+## Features
 
 ### Mortgage Calculator
-- Расчет ежемесячного платежа
-- Учет налогов, страховки, PMI, HOA
-- График разбивки платежей (pie chart)
-- График амортизации (line chart)
-- Расчет экономии при дополнительных платежах
-- Детальный график погашения кредита
+- Monthly payment calculation
+- Taxes, insurance, PMI, HOA accounting
+- Payment breakdown chart (pie chart)
+- Amortization chart (line chart)
+- Savings calculation with extra payments
+- Detailed loan payoff schedule
 
 ### TVM Calculators
-- **Future Value** - расчет сложных процентов
-- **Present Value** - текущая стоимость будущей суммы
-- **Annuity Payment** - платеж по аннуитету
+- **Future Value** - compound interest calculation
+- **Present Value** - present value of future amount
+- **Annuity Payment** - annuity payment
 
-## Следующие шаги
+## Next Steps
 
-1. Убедитесь, что backend API запущен на `http://localhost:8000`
-2. Запустите `npm run dev`
-3. Откройте браузер и наслаждайтесь! 🎉
+1. Make sure the backend API is running on `http://localhost:8000`
+2. Run `npm run dev`
+3. Open your browser and enjoy! 🎉
