@@ -1,26 +1,88 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { tvmAPI } from '../services/api'
+import { useLocalStorage } from '../hooks/useLocalStorage'
+import { shareContent, formatTVMShareText, generateShareUrl } from '../utils/share'
 import './TVMCalculator.css'
 
 function TVMCalculator() {
-  const [activeCalc, setActiveCalc] = useState('future-value')
-  const [inputs, setInputs] = useState({
-    principal: 10000,
-    futureValue: 20000,
-    presentValue: 10000,
-    annualRate: 7.0,
-    years: 10,
-    compoundsPerYear: 12,
-    paymentsPerYear: 12,
-  })
+  // Load from URL params
+  const getInitialCalc = () => {
+    const params = new URLSearchParams(window.location.search)
+    return params.get('calc') || 'future-value'
+  }
+
+  const [activeCalc, setActiveCalc] = useState(getInitialCalc())
+
+  const getInitialInputs = () => {
+    const params = new URLSearchParams(window.location.search)
+    return {
+      principal: params.get('principal') ? parseFloat(params.get('principal')) : 10000,
+      futureValue: params.get('futureValue') ? parseFloat(params.get('futureValue')) : 20000,
+      presentValue: params.get('presentValue') ? parseFloat(params.get('presentValue')) : 10000,
+      annualRate: params.get('rate') ? parseFloat(params.get('rate')) : 7.0,
+      years: params.get('years') ? parseFloat(params.get('years')) : 10,
+      compoundsPerYear: params.get('compounds') ? parseInt(params.get('compounds')) : 12,
+      paymentsPerYear: params.get('payments') ? parseInt(params.get('payments')) : 12,
+    }
+  }
+
+  const [inputs, setInputs] = useLocalStorage('tvm-inputs', getInitialInputs())
+  const [shareStatus, setShareStatus] = useState(null)
   const [results, setResults] = useState(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
 
+  // Sync URL params on mount
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    if (params.get('calc')) {
+      setActiveCalc(params.get('calc'))
+    }
+    if (params.toString()) {
+      const urlInputs = getInitialInputs()
+      setInputs(urlInputs)
+    }
+  }, [])
+
   const handleInputChange = (field, value) => {
-    setInputs(prev => ({ ...prev, [field]: parseFloat(value) || 0 }))
+    setInputs(prev => {
+      // Handle select dropdowns (compoundsPerYear, paymentsPerYear) as integers
+      if (field === 'compoundsPerYear' || field === 'paymentsPerYear') {
+        return { ...prev, [field]: parseInt(value) || 0 }
+      }
+      // Handle number inputs
+      return { ...prev, [field]: parseFloat(value) || 0 }
+    })
     setResults(null)
     setError(null)
+    setShareStatus(null)
+  }
+
+  const handleShare = async () => {
+    if (!results) return
+
+    const shareUrl = generateShareUrl(window.location.origin + window.location.pathname, {
+      calc: activeCalc,
+      principal: activeCalc === 'future-value' ? inputs.principal : undefined,
+      futureValue: activeCalc === 'present-value' ? inputs.futureValue : undefined,
+      presentValue: activeCalc === 'annuity-payment' ? inputs.presentValue : undefined,
+      rate: inputs.annualRate,
+      years: inputs.years,
+      compounds: activeCalc !== 'annuity-payment' ? inputs.compoundsPerYear : undefined,
+      payments: activeCalc === 'annuity-payment' ? inputs.paymentsPerYear : undefined,
+    })
+
+    const shareText = formatTVMShareText(activeCalc, inputs, results)
+    
+    const result = await shareContent(`${activeCalc === 'future-value' ? 'Future Value' : activeCalc === 'present-value' ? 'Present Value' : 'Annuity Payment'} Calculation`, shareText, shareUrl)
+    
+    if (result.success) {
+      setShareStatus(result.method === 'native' ? 'shared' : 'copied')
+      setTimeout(() => setShareStatus(null), 3000)
+    } else {
+      setShareStatus('error')
+      setTimeout(() => setShareStatus(null), 3000)
+    }
   }
 
   const calculate = async () => {
@@ -249,13 +311,25 @@ function TVMCalculator() {
             )}
           </div>
 
-          <button
-            className="calculate-button"
-            onClick={calculate}
-            disabled={loading}
-          >
-            {loading ? 'Calculating...' : 'Calculate'}
-          </button>
+          <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
+            <button
+              className="calculate-button"
+              onClick={calculate}
+              disabled={loading}
+              style={{ flex: 1 }}
+            >
+              {loading ? 'Calculating...' : 'Calculate'}
+            </button>
+            {results && (
+              <button
+                className="share-button"
+                onClick={handleShare}
+                title="Share calculation"
+              >
+                {shareStatus === 'shared' ? '✓ Shared' : shareStatus === 'copied' ? '✓ Copied' : shareStatus === 'error' ? '✗ Error' : '📤 Share'}
+              </button>
+            )}
+          </div>
 
           {error && <div className="error-message">{error}</div>}
         </div>

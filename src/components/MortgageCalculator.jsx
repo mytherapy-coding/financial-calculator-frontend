@@ -1,20 +1,41 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { mortgageAPI } from '../services/api'
 import AmortizationChart from './AmortizationChart'
 import PaymentBreakdownChart from './PaymentBreakdownChart'
+import { useLocalStorage } from '../hooks/useLocalStorage'
+import { shareContent, copyToClipboard, formatMortgageShareText, generateShareUrl } from '../utils/share'
 import './MortgageCalculator.css'
 
 function MortgageCalculator() {
-  const [inputs, setInputs] = useState({
-    principal: 300000,
-    annualRate: 4.0,
-    years: 30,
-    propertyTax: 0,
-    homeInsurance: 0,
-    pmi: 0,
-    hoa: 0,
-    extraPayment: 0,
-  })
+  // Load from URL params or localStorage
+  const getInitialInputs = () => {
+    const params = new URLSearchParams(window.location.search)
+    const urlInputs = {
+      principal: params.get('principal') ? parseFloat(params.get('principal')) : null,
+      annualRate: params.get('rate') ? parseFloat(params.get('rate')) : null,
+      years: params.get('years') ? parseFloat(params.get('years')) : null,
+      propertyTax: params.get('propertyTax') ? parseFloat(params.get('propertyTax')) : null,
+      homeInsurance: params.get('homeInsurance') ? parseFloat(params.get('homeInsurance')) : null,
+      pmi: params.get('pmi') ? parseFloat(params.get('pmi')) : null,
+      hoa: params.get('hoa') ? parseFloat(params.get('hoa')) : null,
+      extraPayment: params.get('extraPayment') ? parseFloat(params.get('extraPayment')) : null,
+    }
+    
+    // Use URL params if available, otherwise use defaults
+    return {
+      principal: urlInputs.principal ?? 300000,
+      annualRate: urlInputs.annualRate ?? 4.0,
+      years: urlInputs.years ?? 30,
+      propertyTax: urlInputs.propertyTax ?? 0,
+      homeInsurance: urlInputs.homeInsurance ?? 0,
+      pmi: urlInputs.pmi ?? 0,
+      hoa: urlInputs.hoa ?? 0,
+      extraPayment: urlInputs.extraPayment ?? 0,
+    }
+  }
+
+  const [inputs, setInputs] = useLocalStorage('mortgage-inputs', getInitialInputs())
+  const [shareStatus, setShareStatus] = useState(null)
 
   const [results, setResults] = useState(null)
   const [loading, setLoading] = useState(false)
@@ -22,10 +43,50 @@ function MortgageCalculator() {
   const [showAmortization, setShowAmortization] = useState(false)
   const [amortizationData, setAmortizationData] = useState(null)
 
+  // Sync URL params on mount
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    if (params.toString()) {
+      const urlInputs = getInitialInputs()
+      setInputs(urlInputs)
+    }
+  }, [])
+
   const handleInputChange = (field, value) => {
-    setInputs(prev => ({ ...prev, [field]: parseFloat(value) || 0 }))
+    setInputs(prev => {
+      const updated = { ...prev, [field]: parseFloat(value) || 0 }
+      return updated
+    })
     setResults(null)
     setError(null)
+    setShareStatus(null)
+  }
+
+  const handleShare = async () => {
+    if (!results) return
+
+    const shareUrl = generateShareUrl(window.location.origin + window.location.pathname, {
+      principal: inputs.principal,
+      rate: inputs.annualRate,
+      years: inputs.years,
+      propertyTax: inputs.propertyTax || undefined,
+      homeInsurance: inputs.homeInsurance || undefined,
+      pmi: inputs.pmi || undefined,
+      hoa: inputs.hoa || undefined,
+      extraPayment: inputs.extraPayment || undefined,
+    })
+
+    const shareText = formatMortgageShareText(inputs, results)
+    
+    const result = await shareContent('Mortgage Calculation', shareText, shareUrl)
+    
+    if (result.success) {
+      setShareStatus(result.method === 'native' ? 'shared' : 'copied')
+      setTimeout(() => setShareStatus(null), 3000)
+    } else {
+      setShareStatus('error')
+      setTimeout(() => setShareStatus(null), 3000)
+    }
   }
 
   const calculateMortgage = async () => {
@@ -191,13 +252,25 @@ function MortgageCalculator() {
             </div>
           </div>
 
-          <button
-            className="calculate-button"
-            onClick={calculateMortgage}
-            disabled={loading}
-          >
-            {loading ? 'Calculating...' : 'Calculate Mortgage'}
-          </button>
+          <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
+            <button
+              className="calculate-button"
+              onClick={calculateMortgage}
+              disabled={loading}
+              style={{ flex: 1 }}
+            >
+              {loading ? 'Calculating...' : 'Calculate Mortgage'}
+            </button>
+            {results && (
+              <button
+                className="share-button"
+                onClick={handleShare}
+                title="Share calculation"
+              >
+                {shareStatus === 'shared' ? '✓ Shared' : shareStatus === 'copied' ? '✓ Copied' : shareStatus === 'error' ? '✗ Error' : '📤 Share'}
+              </button>
+            )}
+          </div>
 
           {error && <div className="error-message">{error}</div>}
         </div>
