@@ -1,0 +1,97 @@
+.tvm-calculator {
+  padding: 20px 0;
+}
+
+.calc-tabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  background: white;
+  padding: 10px;
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.calc-tab {
+  flex: 1;
+  padding: 12px 20px;
+  border: 2px solid #e0e0e0;
+  background: white;
+  color: #666;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.calc-tab:hover {
+  border-color: #667eea;
+  color: #667eea;
+}
+
+.calc-tab.active {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-color: #667eea;
+}
+
+.results-content {
+  display: flex;
+  justify-content: center;
+  padding: 30px;
+}
+
+.result-item {
+  text-align: center;
+  padding: 30px 50px;
+  background: #f8f9fa;
+  border-radius: 12px;
+  min-width: 300px;
+}
+
+.result-item.highlight {
+  background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+  border: 2px solid #667eea;
+}
+
+.result-label {
+  font-size: 1.1rem;
+  color: #666;
+  margin-bottom: 15px;
+  font-weight: 500;
+}
+
+.result-value {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #667eea;
+}
+
+.input-group select {
+  padding: 12px;
+  border: 2px solid #e0e0e0;
+  border-radius: 6px;
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
+  background: white;
+}
+
+.input-group select:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+@media (max-width: 768px) {
+  .calc-tabs {
+    flex-direction: column;
+  }
+  
+  .result-item {
+    min-width: auto;
+    padding: 20px;
+  }
+  
+  .result-value {
+    font-size: 2rem;
+  }
+}
