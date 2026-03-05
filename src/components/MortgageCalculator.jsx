@@ -47,9 +47,19 @@ function MortgageCalculator() {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
     if (params.toString()) {
-      const urlInputs = getInitialInputs()
+      const urlInputs = {
+        principal: params.get('principal') ? parseFloat(params.get('principal')) : 300000,
+        annualRate: params.get('rate') ? parseFloat(params.get('rate')) : 4.0,
+        years: params.get('years') ? parseFloat(params.get('years')) : 30,
+        propertyTax: params.get('propertyTax') ? parseFloat(params.get('propertyTax')) : 0,
+        homeInsurance: params.get('homeInsurance') ? parseFloat(params.get('homeInsurance')) : 0,
+        pmi: params.get('pmi') ? parseFloat(params.get('pmi')) : 0,
+        hoa: params.get('hoa') ? parseFloat(params.get('hoa')) : 0,
+        extraPayment: params.get('extraPayment') ? parseFloat(params.get('extraPayment')) : 0,
+      }
       setInputs(urlInputs)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const handleInputChange = (field, value) => {

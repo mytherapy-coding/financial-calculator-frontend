@@ -39,9 +39,18 @@ function TVMCalculator() {
       setActiveCalc(params.get('calc'))
     }
     if (params.toString()) {
-      const urlInputs = getInitialInputs()
+      const urlInputs = {
+        principal: params.get('principal') ? parseFloat(params.get('principal')) : 10000,
+        futureValue: params.get('futureValue') ? parseFloat(params.get('futureValue')) : 20000,
+        presentValue: params.get('presentValue') ? parseFloat(params.get('presentValue')) : 10000,
+        annualRate: params.get('rate') ? parseFloat(params.get('rate')) : 7.0,
+        years: params.get('years') ? parseFloat(params.get('years')) : 10,
+        compoundsPerYear: params.get('compounds') ? parseInt(params.get('compounds')) : 12,
+        paymentsPerYear: params.get('payments') ? parseInt(params.get('payments')) : 12,
+      }
       setInputs(urlInputs)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const handleInputChange = (field, value) => {
