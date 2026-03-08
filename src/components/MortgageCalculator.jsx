@@ -3,7 +3,7 @@ import { mortgageAPI } from '../services/api'
 import AmortizationChart from './AmortizationChart'
 import PaymentBreakdownChart from './PaymentBreakdownChart'
 import { useLocalStorage } from '../hooks/useLocalStorage'
-import { shareContent, copyToClipboard, formatMortgageShareText, generateShareUrl } from '../utils/share'
+import { shareContent, formatMortgageShareText, generateShareUrl } from '../utils/share'
 import './MortgageCalculator.css'
 
 function MortgageCalculator() {

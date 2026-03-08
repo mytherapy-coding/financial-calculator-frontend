@@ -14,6 +14,18 @@ async function apiRequest(endpoint, options = {}) {
       ...options,
     })
 
+    if (!response.ok) {
+      const errorText = await response.text()
+      let errorMessage = `API request failed with status ${response.status}`
+      try {
+        const errorData = JSON.parse(errorText)
+        errorMessage = errorData.error?.message || errorMessage
+      } catch {
+        errorMessage = errorText || errorMessage
+      }
+      throw new Error(errorMessage)
+    }
+
     const data = await response.json()
 
     if (!data.ok) {
