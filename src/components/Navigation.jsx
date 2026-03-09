@@ -1,6 +1,6 @@
 import './Navigation.css'
 
-function Navigation({ activeTab, setActiveTab }) {
+function Navigation({ activeTab = 'mortgage', setActiveTab }) {
   return (
     <nav className="navigation">
       <div className="nav-container">

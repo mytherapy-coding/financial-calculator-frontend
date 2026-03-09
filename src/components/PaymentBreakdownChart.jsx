@@ -1,9 +1,9 @@
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts'
 
-function PaymentBreakdownChart({ monthlyPayment, propertyTax, homeInsurance, pmi, hoa }) {
-  const monthlyTax = propertyTax / 12
-  const monthlyInsurance = homeInsurance / 12
-  const monthlyPMI = pmi / 12
+function PaymentBreakdownChart({ monthlyPayment = 0, propertyTax = 0, homeInsurance = 0, pmi = 0, hoa = 0 }) {
+  const monthlyTax = (propertyTax || 0) / 12
+  const monthlyInsurance = (homeInsurance || 0) / 12
+  const monthlyPMI = (pmi || 0) / 12
 
   const data = [
     { name: 'Principal & Interest', value: monthlyPayment },

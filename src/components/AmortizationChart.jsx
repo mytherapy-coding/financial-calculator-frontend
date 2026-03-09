@@ -2,8 +2,12 @@ import { useState } from 'react'
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
 import './AmortizationChart.css'
 
-function AmortizationChart({ schedule }) {
+function AmortizationChart({ schedule = [] }) {
   const [viewMode, setViewMode] = useState('yearly') // 'yearly' or 'monthly'
+
+  if (!schedule || schedule.length === 0) {
+    return <div className="amortization-chart">No amortization data available</div>
+  }
 
   // Group by year for yearly view
   const yearlyData = schedule.reduce((acc, payment, index) => {
@@ -70,7 +74,7 @@ function AmortizationChart({ schedule }) {
             angle={-45}
             textAnchor="end"
             height={100}
-            interval={viewMode === 'yearly' ? 0 : Math.floor(displayData.length / 12)}
+            interval={viewMode === 'yearly' ? 0 : displayData.length > 0 ? Math.floor(displayData.length / 12) : 0}
           />
           <YAxis
             yAxisId="left"
