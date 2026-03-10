@@ -13,7 +13,7 @@ function PaymentBreakdownChart({ monthlyPayment = 0, propertyTax = 0, homeInsura
     { name: 'HOA', value: hoa },
   ].filter(item => item.value > 0)
 
-  const COLORS = ['#667eea', '#764ba2', '#f093fb', '#4facfe', '#43e97b']
+  const COLORS = ['#c59dff', '#e0b3ff', '#f7c6ff', '#b3d4ff', '#9be7c4']
 
   return (
     <div className="payment-chart">

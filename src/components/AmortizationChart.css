@@ -14,9 +14,9 @@
 
 .view-button {
   padding: 8px 20px;
-  border: 2px solid #667eea;
+  border: 2px solid #c59dff;
   background: white;
-  color: #667eea;
+  color: #c59dff;
   border-radius: 6px;
   cursor: pointer;
   font-weight: 500;
@@ -28,6 +28,6 @@
 }
 
 .view-button.active {
-  background: #667eea;
+  background: #c59dff;
   color: white;
 }
