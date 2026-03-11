@@ -96,7 +96,7 @@ function AmortizationChart({ schedule = [] }) {
             yAxisId="left"
             type="monotone"
             dataKey="principal"
-            stroke="#c59dff"
+            stroke="#667eea"
             strokeWidth={2}
             name="Principal"
           />
@@ -104,7 +104,7 @@ function AmortizationChart({ schedule = [] }) {
             yAxisId="left"
             type="monotone"
             dataKey="interest"
-            stroke="#e0b3ff"
+            stroke="#764ba2"
             strokeWidth={2}
             name="Interest"
           />
@@ -112,7 +112,7 @@ function AmortizationChart({ schedule = [] }) {
             yAxisId="right"
             type="monotone"
             dataKey="balance"
-            stroke="#9be7c4"
+            stroke="#43e97b"
             strokeWidth={2}
             name="Remaining Balance"
             strokeDasharray="5 5"
