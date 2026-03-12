@@ -1,6 +1,6 @@
 # Financial Calculator Frontend
 
-Modern, beautiful frontend for the Financial Calculations API. Built with React, Vite, and Recharts for stunning visualizations.
+Modern, responsive web app for running common personal finance calculations (mortgages and time‑value‑of‑money) with clear summaries and interactive charts. Built with React, Vite, and Recharts.
 
 ## Features
 
@@ -95,7 +95,7 @@ src/
 
 ## API Integration
 
-This frontend integrates with the [financial-calculations-api](https://github.com/yourusername/financial-calculations-api) backend:
+This frontend integrates with the [`financial-calculations-api`](https://github.com/mytherapy-coding/financial-calculations-api) backend:
 
 - `/v1/mortgage/payment` - Calculate mortgage payment
 - `/v1/mortgage/summary` - Get mortgage summary
