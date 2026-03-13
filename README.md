@@ -71,6 +71,18 @@ src/
 
 ## Features in Detail
 
+## Using the App
+
+- **Live demo**: Open the app at [`https://mytherapy-coding.github.io/financial-calculator-frontend/`](https://mytherapy-coding.github.io/financial-calculator-frontend/).
+- **Mortgage tab**:
+  - Enter purchase price, down payment, interest rate, and term.
+  - Optionally add property tax, insurance, PMI, and HOA to see an all‑in monthly payment.
+  - Scroll down to view the amortization chart and payment breakdown pie chart.
+- **TVM tab**:
+  - Choose Future Value, Present Value, or Annuity Payment.
+  - Fill in the known inputs (rate, periods, payment/amount) and calculate the missing value.
+  - Use this to compare savings plans, loan offers, or investment scenarios.
+
 ### Mortgage Calculator
 
 - Calculate monthly mortgage payments
