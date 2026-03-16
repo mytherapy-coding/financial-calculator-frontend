@@ -170,6 +170,13 @@ npm run build
 # GitHub Actions will automatically deploy it
 ```
 
+## Limitations & Notes
+
+- This app is for **educational and planning purposes only** and does not constitute financial advice.
+- Calculations assume constant interest rates and on-time payments; real-world results may differ.
+- Tax, insurance, PMI, and HOA estimates are approximations and can vary by lender and region.
+- Always verify numbers with your lender or a qualified financial professional before making decisions.
+
 ## License
 
 See LICENSE file for details.
