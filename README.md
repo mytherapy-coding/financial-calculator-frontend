@@ -135,6 +135,12 @@ The app uses component-scoped CSS. Each component has its own CSS file. The desi
 - Responsive grid layouts
 - Accessible color contrasts
 
+## Troubleshooting
+
+- **API errors or failed calculations**: Start the [`financial-calculations-api`](https://github.com/mytherapy-coding/financial-calculations-api) backend (default `http://localhost:8000`) or set `VITE_API_BASE` to your deployed API URL, then restart `npm run dev`.
+- **CORS errors in the browser**: The backend must allow your frontend origin (e.g. `http://localhost:3000` or your GitHub Pages URL). Configure CORS on the API, not in this repo.
+- **Preview production build locally**: After `npm run build`, run `npm run preview` to test the `dist` output.
+
 ## Deployment
 
 ### GitHub Pages
