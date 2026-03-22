@@ -40,16 +40,16 @@ The built files will be in the `dist` directory.
 
 ### API Base URL
 
-By default, the app connects to `http://localhost:8000`. To change this:
+By default, the app calls the hosted API at `https://financial-calculations-api.onrender.com` (see `src/services/api.js`). To use a different backend (for example your own machine):
 
 1. Create a `.env` file in the root directory:
 ```bash
-VITE_API_BASE=http://your-api-url.com
+VITE_API_BASE=http://localhost:8000
 ```
 
-2. Or modify `src/services/api.js`:
+2. Or change the fallback in `src/services/api.js`:
 ```javascript
-const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:8000'
+const API_BASE = import.meta.env.VITE_API_BASE || 'https://financial-calculations-api.onrender.com'
 ```
 
 ## Project Structure
@@ -137,7 +137,7 @@ The app uses component-scoped CSS. Each component has its own CSS file. The desi
 
 ## Troubleshooting
 
-- **API errors or failed calculations**: Start the [`financial-calculations-api`](https://github.com/mytherapy-coding/financial-calculations-api) backend (default `http://localhost:8000`) or set `VITE_API_BASE` to your deployed API URL, then restart `npm run dev`.
+- **API errors or failed calculations**: Confirm the API is reachable (default: hosted on Render). To run against a local backend, start [`financial-calculations-api`](https://github.com/mytherapy-coding/financial-calculations-api) and set `VITE_API_BASE=http://localhost:8000` in `.env`, then restart `npm run dev`.
 - **CORS errors in the browser**: The backend must allow your frontend origin (e.g. `http://localhost:3000` or your GitHub Pages URL). Configure CORS on the API, not in this repo.
 - **Preview production build locally**: After `npm run build`, run `npm run preview` to test the `dist` output.
 
@@ -156,8 +156,8 @@ This project is configured for automatic deployment to GitHub Pages.
    - Source: Select "GitHub Actions"
 
 2. **Configure API URL** (optional):
-   - The app defaults to `http://localhost:8000` for local development
-   - For production, set the `VITE_API_BASE` secret in GitHub:
+   - The app defaults to the hosted Render API unless you override `VITE_API_BASE`
+   - To point production at another URL, set the `VITE_API_BASE` secret in GitHub:
      - Go to Settings → Secrets and variables → Actions
      - Add a new secret: `VITE_API_BASE` with your API URL (e.g., `https://your-api.onrender.com`)
 
@@ -185,4 +185,4 @@ npm run build
 
 ## License
 
-See LICENSE file for details.
+See the LICENSE file for details.
