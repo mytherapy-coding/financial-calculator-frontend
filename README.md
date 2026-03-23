@@ -73,8 +73,8 @@ src/
 
 - **Live demo**: Open the app at [https://mytherapy-coding.github.io/financial-calculator-frontend/](https://mytherapy-coding.github.io/financial-calculator-frontend/).
 - **Mortgage tab**:
-  - Enter purchase price, down payment, interest rate, and term.
-  - Optionally add property tax, insurance, PMI, and HOA to see an all-in monthly payment.
+  - Enter **loan amount** (principal), **interest rate**, and **loan term** (years).
+  - Optionally add property tax, home insurance, PMI, and HOA to see an all-in monthly payment.
   - Scroll down to view the amortization chart and payment breakdown pie chart.
 - **TVM tab**:
   - Choose Future Value, Present Value, or Annuity Payment.
@@ -128,7 +128,7 @@ This frontend integrates with the [`financial-calculations-api`](https://github.
 
 ### Styling
 
-The app uses component-scoped CSS. Each component has its own CSS file. The design follows a modern, clean aesthetic with:
+Each component imports its own CSS file (plain CSS, not CSS Modules). The design follows a modern, clean aesthetic with:
 
 - Gradient backgrounds
 - Smooth transitions
