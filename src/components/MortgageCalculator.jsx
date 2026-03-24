@@ -363,7 +363,10 @@ function MortgageCalculator() {
 
               {showAmortization && amortizationData && (
                 <div className="amortization-section">
-                  <AmortizationChart schedule={amortizationData.schedule} />
+                  <AmortizationChart
+                    schedule={amortizationData.schedule}
+                    payoffDate={results.payoff_date}
+                  />
                 </div>
               )}
             </div>

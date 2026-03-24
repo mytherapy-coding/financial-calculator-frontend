@@ -1,33 +1,14 @@
 .amortization-chart {
   margin-top: 20px;
   padding: 20px;
-  background: white;
+  background: #f8fafc;
   border-radius: 8px;
 }
 
-.chart-controls {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 20px;
-  justify-content: center;
-}
-
-.view-button {
-  padding: 8px 20px;
-  border: 2px solid #667eea;
-  background: white;
-  color: #667eea;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: 500;
-  transition: all 0.3s ease;
-}
-
-.view-button:hover {
-  background: #f8f9ff;
-}
-
-.view-button.active {
-  background: #667eea;
-  color: white;
+.amortization-chart-title {
+  margin: 0 0 16px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #334155;
+  text-align: center;
 }
