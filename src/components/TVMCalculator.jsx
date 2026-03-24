@@ -5,14 +5,27 @@ import { copyToClipboard, generateShareUrl, getSharedLinkDateParam } from '../ut
 import { formatCurrency } from '../utils/formatCurrency'
 import './TVMCalculator.css'
 
+const TVM_ACTIVE_CALC_KEY = 'tvm-active-calc'
+
 function TVMCalculator() {
-  // Load from URL params
   const getInitialCalc = () => {
     const params = new URLSearchParams(window.location.search)
-    return params.get('calc') || 'future-value'
+    const fromUrl = params.get('calc')
+    if (fromUrl && ['future-value', 'present-value', 'annuity-payment'].includes(fromUrl)) {
+      return fromUrl
+    }
+    try {
+      const saved = localStorage.getItem(TVM_ACTIVE_CALC_KEY)
+      if (saved && ['future-value', 'present-value', 'annuity-payment'].includes(saved)) {
+        return saved
+      }
+    } catch {
+      /* ignore */
+    }
+    return 'future-value'
   }
 
-  const [activeCalc, setActiveCalc] = useState(getInitialCalc())
+  const [activeCalc, setActiveCalc] = useState(getInitialCalc)
 
   const getInitialInputs = () => {
     const params = new URLSearchParams(window.location.search)
@@ -43,24 +56,36 @@ function TVMCalculator() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
 
-  // Sync URL params on mount
+  useEffect(() => {
+    try {
+      localStorage.setItem(TVM_ACTIVE_CALC_KEY, activeCalc)
+    } catch {
+      /* ignore */
+    }
+  }, [activeCalc])
+
+  // Sync URL only for shared TVM links (not ?tab=tvm&shared=… alone)
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
-    if (params.get('calc')) {
-      setActiveCalc(params.get('calc'))
+    const calcFromUrl = params.get('calc')
+    if (calcFromUrl && ['future-value', 'present-value', 'annuity-payment'].includes(calcFromUrl)) {
+      setActiveCalc(calcFromUrl)
     }
-    if (params.toString()) {
-      const urlInputs = {
-        principal: params.get('principal') ? parseFloat(params.get('principal')) : 10000,
-        futureValue: params.get('futureValue') ? parseFloat(params.get('futureValue')) : 20000,
-        presentValue: params.get('presentValue') ? parseFloat(params.get('presentValue')) : 10000,
-        annualRate: params.get('rate') ? parseFloat(params.get('rate')) : 7.0,
-        years: params.get('years') ? parseFloat(params.get('years')) : 10,
-        compoundsPerYear: params.get('compounds') ? parseInt(params.get('compounds')) : 12,
-        paymentsPerYear: params.get('payments') ? parseInt(params.get('payments')) : 12,
-      }
-      setInputs(urlInputs)
+    const hasSharedTvm =
+      params.has('calc') ||
+      (params.get('tab') === 'tvm' &&
+        (params.has('principal') || params.has('futureValue') || params.has('presentValue') || params.has('rate')))
+    if (!hasSharedTvm) return
+    const urlInputs = {
+      principal: params.get('principal') ? parseFloat(params.get('principal')) : 10000,
+      futureValue: params.get('futureValue') ? parseFloat(params.get('futureValue')) : 20000,
+      presentValue: params.get('presentValue') ? parseFloat(params.get('presentValue')) : 10000,
+      annualRate: params.get('rate') ? parseFloat(params.get('rate')) : 7.0,
+      years: params.get('years') ? parseFloat(params.get('years')) : 10,
+      compoundsPerYear: params.get('compounds') ? parseInt(params.get('compounds')) : 12,
+      paymentsPerYear: params.get('payments') ? parseInt(params.get('payments')) : 12,
     }
+    setInputs(urlInputs)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 

@@ -49,10 +49,10 @@ function MortgageCalculator() {
   const [showAmortization, setShowAmortization] = useState(false)
   const [amortizationData, setAmortizationData] = useState(null)
 
-  // Re-apply URL params when the address bar changes (e.g. in-page navigation)
+  // Re-apply URL only when it contains loan inputs (avoid wiping saved data for ?shared=… only)
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
-    if (!params.toString()) return
+    if (!params.has('principal') && !params.has('rate') && !params.has('years')) return
     const urlInputs = {
       principal: params.get('principal') ? parseFloat(params.get('principal')) : 300000,
       annualRate: params.get('rate') ? parseFloat(params.get('rate')) : 4.0,

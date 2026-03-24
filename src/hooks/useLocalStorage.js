@@ -15,7 +15,14 @@ export function useLocalStorage(key, initialValue, options = {}) {
   const [storedValue, setStoredValue] = useState(() => {
     try {
       if (typeof preferUrlParams === 'function' && preferUrlParams()) {
-        return resolveInitial()
+        const fromUrl = resolveInitial()
+        // Keep localStorage in sync so refresh without query string still matches
+        try {
+          window.localStorage.setItem(key, JSON.stringify(fromUrl))
+        } catch (e) {
+          console.warn(`Could not persist ${key} after URL load`, e)
+        }
+        return fromUrl
       }
       const item = window.localStorage.getItem(key)
       if (item) return JSON.parse(item)
