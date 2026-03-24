@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { tvmAPI } from '../services/api'
 import { useLocalStorage } from '../hooks/useLocalStorage'
-import { copyToClipboard, generateShareUrl } from '../utils/share'
+import { copyToClipboard, generateShareUrl, getSharedLinkDateParam } from '../utils/share'
 import { formatCurrency } from '../utils/formatCurrency'
 import './TVMCalculator.css'
 
@@ -83,6 +83,7 @@ function TVMCalculator() {
 
     const shareUrl = generateShareUrl(window.location.origin + window.location.pathname, {
       tab: 'tvm',
+      shared: getSharedLinkDateParam(),
       calc: activeCalc,
       principal: activeCalc === 'future-value' ? inputs.principal : undefined,
       futureValue: activeCalc === 'present-value' ? inputs.futureValue : undefined,
@@ -362,7 +363,7 @@ function TVMCalculator() {
               <button
                 className="share-button"
                 onClick={handleShare}
-                title="Copy share link to clipboard"
+                title="Share: copy a link with your inputs and today’s date"
               >
                 {shareStatus === 'copied'
                   ? '✓ Copied'

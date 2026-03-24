@@ -3,7 +3,7 @@ import { mortgageAPI } from '../services/api'
 import AmortizationChart from './AmortizationChart'
 import PaymentBreakdownChart from './PaymentBreakdownChart'
 import { useLocalStorage } from '../hooks/useLocalStorage'
-import { copyToClipboard, generateShareUrl } from '../utils/share'
+import { copyToClipboard, generateShareUrl, getSharedLinkDateParam } from '../utils/share'
 import { formatCurrency, formatInteger } from '../utils/formatCurrency'
 import './MortgageCalculator.css'
 
@@ -82,6 +82,7 @@ function MortgageCalculator() {
 
     const shareUrl = generateShareUrl(window.location.origin + window.location.pathname, {
       tab: 'mortgage',
+      shared: getSharedLinkDateParam(),
       principal: inputs.principal,
       rate: inputs.annualRate,
       years: inputs.years,
@@ -286,7 +287,7 @@ function MortgageCalculator() {
               <button
                 className="share-button"
                 onClick={handleShare}
-                title="Copy share link to clipboard"
+                title="Share: copy a link with your inputs and today’s date"
               >
                 {shareStatus === 'copied'
                   ? '✓ Copied'

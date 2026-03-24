@@ -42,6 +42,14 @@ export async function copyToClipboard(text) {
 }
 
 /**
+ * Timestamp for the `shared` query param (when the link was created).
+ * ISO 8601 so the URL shows when it was shared.
+ */
+export function getSharedLinkDateParam() {
+  return new Date().toISOString()
+}
+
+/**
  * Build a URL with query params so opening it reloads the same inputs.
  */
 export function generateShareUrl(baseUrl, params) {
