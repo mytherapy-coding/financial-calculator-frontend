@@ -80,11 +80,13 @@ function AmortizationChart({ schedule = [] }) {
           <YAxis
             yAxisId="left"
             label={{ value: 'Payment ($)', angle: -90, position: 'insideLeft' }}
+            tickFormatter={(v) => formatCurrency(v)}
           />
           <YAxis
             yAxisId="right"
             orientation="right"
             label={{ value: 'Balance ($)', angle: 90, position: 'insideRight' }}
+            tickFormatter={(v) => formatCurrency(v)}
           />
           <Tooltip
             formatter={(value) => formatCurrency(value)}

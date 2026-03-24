@@ -26,7 +26,9 @@ function PaymentBreakdownChart({ monthlyPayment = 0, propertyTax = 0, homeInsura
             cx="50%"
             cy="50%"
             labelLine={false}
-            label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+            label={({ name, percent, value }) =>
+              `${name}: ${formatCurrency(value)} (${(percent * 100).toFixed(0)}%)`
+            }
             outerRadius={100}
             fill="#8884d8"
             dataKey="value"
@@ -38,7 +40,12 @@ function PaymentBreakdownChart({ monthlyPayment = 0, propertyTax = 0, homeInsura
           <Tooltip
             formatter={(value) => formatCurrency(value)}
           />
-          <Legend />
+          <Legend
+            formatter={(value, entry) => {
+              const amt = entry?.payload?.value
+              return typeof amt === 'number' ? `${value}: ${formatCurrency(amt)}` : value
+            }}
+          />
         </PieChart>
       </ResponsiveContainer>
     </div>

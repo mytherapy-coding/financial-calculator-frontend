@@ -4,7 +4,7 @@ import AmortizationChart from './AmortizationChart'
 import PaymentBreakdownChart from './PaymentBreakdownChart'
 import { useLocalStorage } from '../hooks/useLocalStorage'
 import { shareContent, formatMortgageShareText, generateShareUrl } from '../utils/share'
-import { formatCurrency } from '../utils/formatCurrency'
+import { formatCurrency, formatInteger } from '../utils/formatCurrency'
 import './MortgageCalculator.css'
 
 function MortgageCalculator() {
@@ -322,7 +322,7 @@ function MortgageCalculator() {
 
                 <div className="summary-item">
                   <div className="summary-label">Payoff Months</div>
-                  <div className="summary-value">{results.payoff_months}</div>
+                  <div className="summary-value">{formatInteger(results.payoff_months)}</div>
                 </div>
               </div>
 
@@ -331,7 +331,7 @@ function MortgageCalculator() {
                   <h4>With Extra Payments:</h4>
                   <div className="extra-grid">
                     <div>
-                      <strong>Months Saved:</strong> {results.extraPaymentResults.months_saved}
+                      <strong>Months Saved:</strong> {formatInteger(results.extraPaymentResults.months_saved)}
                     </div>
                     <div>
                       <strong>Interest Saved:</strong> {formatCurrency(results.extraPaymentResults.interest_saved)}
