@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { tvmAPI } from '../services/api'
 import { useLocalStorage } from '../hooks/useLocalStorage'
-import { shareContent, formatTVMShareText, generateShareUrl } from '../utils/share'
+import { copyToClipboard, generateShareUrl } from '../utils/share'
 import { formatCurrency } from '../utils/formatCurrency'
 import './TVMCalculator.css'
 
@@ -93,12 +93,9 @@ function TVMCalculator() {
       payments: activeCalc === 'annuity-payment' ? inputs.paymentsPerYear : undefined,
     })
 
-    const shareText = formatTVMShareText(activeCalc, inputs, results)
-    
-    const result = await shareContent(`${activeCalc === 'future-value' ? 'Future Value' : activeCalc === 'present-value' ? 'Present Value' : 'Annuity Payment'} Calculation`, shareText, shareUrl)
-
-    if (result.success) {
-      setShareStatus(result.method === 'native' ? 'shared' : 'copied')
+    const ok = await copyToClipboard(shareUrl)
+    if (ok) {
+      setShareStatus('copied')
       setTimeout(() => setShareStatus(null), 3000)
     } else {
       setShareStatus('error')
@@ -365,15 +362,13 @@ function TVMCalculator() {
               <button
                 className="share-button"
                 onClick={handleShare}
-                title="Copy your results and a link to reload this calculation"
+                title="Copy share link to clipboard"
               >
-                {shareStatus === 'shared'
-                  ? '✓ Shared'
-                  : shareStatus === 'copied'
-                    ? '✓ Copied'
-                    : shareStatus === 'error'
-                      ? '✗ Copy failed'
-                      : '📋 Copy & share'}
+                {shareStatus === 'copied'
+                  ? '✓ Copied'
+                  : shareStatus === 'error'
+                    ? '✗ Failed'
+                    : 'Share'}
               </button>
             )}
           </div>

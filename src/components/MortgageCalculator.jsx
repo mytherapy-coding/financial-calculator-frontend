@@ -3,7 +3,7 @@ import { mortgageAPI } from '../services/api'
 import AmortizationChart from './AmortizationChart'
 import PaymentBreakdownChart from './PaymentBreakdownChart'
 import { useLocalStorage } from '../hooks/useLocalStorage'
-import { shareContent, formatMortgageShareText, generateShareUrl } from '../utils/share'
+import { copyToClipboard, generateShareUrl } from '../utils/share'
 import { formatCurrency, formatInteger } from '../utils/formatCurrency'
 import './MortgageCalculator.css'
 
@@ -92,12 +92,9 @@ function MortgageCalculator() {
       extraPayment: inputs.extraPayment || undefined,
     })
 
-    const shareText = formatMortgageShareText(inputs, results)
-
-    const result = await shareContent('Mortgage Calculation', shareText, shareUrl)
-
-    if (result.success) {
-      setShareStatus(result.method === 'native' ? 'shared' : 'copied')
+    const ok = await copyToClipboard(shareUrl)
+    if (ok) {
+      setShareStatus('copied')
       setTimeout(() => setShareStatus(null), 3000)
     } else {
       setShareStatus('error')
@@ -289,15 +286,13 @@ function MortgageCalculator() {
               <button
                 className="share-button"
                 onClick={handleShare}
-                title="Copy your results and a link to reload this calculation"
+                title="Copy share link to clipboard"
               >
-                {shareStatus === 'shared'
-                  ? '✓ Shared'
-                  : shareStatus === 'copied'
-                    ? '✓ Copied'
-                    : shareStatus === 'error'
-                      ? '✗ Copy failed'
-                      : '📋 Copy & share'}
+                {shareStatus === 'copied'
+                  ? '✓ Copied'
+                  : shareStatus === 'error'
+                    ? '✗ Failed'
+                    : 'Share'}
               </button>
             )}
           </div>
