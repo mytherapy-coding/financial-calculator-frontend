@@ -1,6 +1,7 @@
 /**
  * Share utility functions
  */
+import { formatCurrency } from './formatCurrency'
 
 /**
  * Copy text to clipboard
@@ -96,13 +97,13 @@ export function formatMortgageShareText(inputs, results) {
 
   return `Mortgage Calculation Results:
 
-Loan Amount: $${inputs.principal.toLocaleString()}
+Loan Amount: ${formatCurrency(inputs.principal)}
 Interest Rate: ${inputs.annualRate}%
 Loan Term: ${inputs.years} years
 
-Monthly Payment: $${totalMonthly.toFixed(2)}
-Total Interest: $${results.total_interest.toFixed(2)}
-Total Paid: $${results.total_paid.toFixed(2)}
+Monthly Payment: ${formatCurrency(totalMonthly)}
+Total Interest: ${formatCurrency(results.total_interest)}
+Total Paid: ${formatCurrency(results.total_paid)}
 Payoff Date: ${results.payoff_date}
 
 Calculate yours at: https://mytherapy-coding.github.io/financial-calculator-frontend/`
@@ -121,23 +122,23 @@ export function formatTVMShareText(calcType, inputs, results) {
   let text = `${calcNames[calcType]} Calculation:\n\n`
 
   if (calcType === 'future-value') {
-    text += `Principal: $${inputs.principal.toLocaleString()}\n`
+    text += `Principal: ${formatCurrency(inputs.principal)}\n`
     text += `Interest Rate: ${inputs.annualRate}%\n`
     text += `Years: ${inputs.years}\n`
     text += `Compounds per Year: ${inputs.compoundsPerYear}\n\n`
-    text += `Future Value: $${results.futureValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+    text += `Future Value: ${formatCurrency(results.futureValue)}`
   } else if (calcType === 'present-value') {
-    text += `Future Value: $${inputs.futureValue.toLocaleString()}\n`
+    text += `Future Value: ${formatCurrency(inputs.futureValue)}\n`
     text += `Interest Rate: ${inputs.annualRate}%\n`
     text += `Years: ${inputs.years}\n`
     text += `Compounds per Year: ${inputs.compoundsPerYear}\n\n`
-    text += `Present Value: $${results.presentValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+    text += `Present Value: ${formatCurrency(results.presentValue)}`
   } else if (calcType === 'annuity-payment') {
-    text += `Present Value: $${inputs.presentValue.toLocaleString()}\n`
+    text += `Present Value: ${formatCurrency(inputs.presentValue)}\n`
     text += `Interest Rate: ${inputs.annualRate}%\n`
     text += `Years: ${inputs.years}\n`
     text += `Payments per Year: ${inputs.paymentsPerYear}\n\n`
-    text += `Payment Amount: $${results.payment.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+    text += `Payment Amount: ${formatCurrency(results.payment)}`
   }
 
   text += `\n\nCalculate yours at: https://mytherapy-coding.github.io/financial-calculator-frontend/`

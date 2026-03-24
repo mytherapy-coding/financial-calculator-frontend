@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { formatCurrency } from '../utils/formatCurrency'
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
 import './AmortizationChart.css'
 
@@ -86,10 +87,7 @@ function AmortizationChart({ schedule = [] }) {
             label={{ value: 'Balance ($)', angle: 90, position: 'insideRight' }}
           />
           <Tooltip
-            formatter={(value, name) => {
-              if (name === 'balance') return `$${value.toLocaleString()}`
-              return `$${value.toFixed(2)}`
-            }}
+            formatter={(value) => formatCurrency(value)}
           />
           <Legend />
           <Line

@@ -1,4 +1,5 @@
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts'
+import { formatCurrency } from '../utils/formatCurrency'
 
 function PaymentBreakdownChart({ monthlyPayment = 0, propertyTax = 0, homeInsurance = 0, pmi = 0, hoa = 0 }) {
   const monthlyTax = (propertyTax || 0) / 12
@@ -35,7 +36,7 @@ function PaymentBreakdownChart({ monthlyPayment = 0, propertyTax = 0, homeInsura
             ))}
           </Pie>
           <Tooltip
-            formatter={(value) => `$${value.toFixed(2)}`}
+            formatter={(value) => formatCurrency(value)}
           />
           <Legend />
         </PieChart>

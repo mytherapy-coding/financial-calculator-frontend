@@ -4,6 +4,7 @@ import AmortizationChart from './AmortizationChart'
 import PaymentBreakdownChart from './PaymentBreakdownChart'
 import { useLocalStorage } from '../hooks/useLocalStorage'
 import { shareContent, formatMortgageShareText, generateShareUrl } from '../utils/share'
+import { formatCurrency } from '../utils/formatCurrency'
 import './MortgageCalculator.css'
 
 function MortgageCalculator() {
@@ -296,22 +297,22 @@ function MortgageCalculator() {
               <div className="summary-grid">
                 <div className="summary-item highlight">
                   <div className="summary-label">Total Monthly Payment</div>
-                  <div className="summary-value">${totalMonthlyPayment.toFixed(2)}</div>
+                  <div className="summary-value">{formatCurrency(totalMonthlyPayment)}</div>
                 </div>
 
                 <div className="summary-item">
                   <div className="summary-label">Monthly Principal & Interest</div>
-                  <div className="summary-value">${results.monthly_payment.toFixed(2)}</div>
+                  <div className="summary-value">{formatCurrency(results.monthly_payment)}</div>
                 </div>
 
                 <div className="summary-item">
                   <div className="summary-label">Total Interest Paid</div>
-                  <div className="summary-value">${results.total_interest.toFixed(2)}</div>
+                  <div className="summary-value">{formatCurrency(results.total_interest)}</div>
                 </div>
 
                 <div className="summary-item">
                   <div className="summary-label">Total Paid</div>
-                  <div className="summary-value">${results.total_paid.toFixed(2)}</div>
+                  <div className="summary-value">{formatCurrency(results.total_paid)}</div>
                 </div>
 
                 <div className="summary-item">
@@ -333,7 +334,7 @@ function MortgageCalculator() {
                       <strong>Months Saved:</strong> {results.extraPaymentResults.months_saved}
                     </div>
                     <div>
-                      <strong>Interest Saved:</strong> ${results.extraPaymentResults.interest_saved.toFixed(2)}
+                      <strong>Interest Saved:</strong> {formatCurrency(results.extraPaymentResults.interest_saved)}
                     </div>
                     <div>
                       <strong>New Payoff Date:</strong> {results.extraPaymentResults.new_payoff_date}

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { tvmAPI } from '../services/api'
 import { useLocalStorage } from '../hooks/useLocalStorage'
 import { shareContent, formatTVMShareText, generateShareUrl } from '../utils/share'
+import { formatCurrency } from '../utils/formatCurrency'
 import './TVMCalculator.css'
 
 function TVMCalculator() {
@@ -366,19 +367,19 @@ function TVMCalculator() {
               {activeCalc === 'future-value' && results && 'futureValue' in results && (
                 <div className="result-item highlight">
                   <div className="result-label">Future Value</div>
-                  <div className="result-value">${Number(results.futureValue).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+                  <div className="result-value">{formatCurrency(results.futureValue)}</div>
                 </div>
               )}
               {activeCalc === 'present-value' && results && 'presentValue' in results && (
                 <div className="result-item highlight">
                   <div className="result-label">Present Value</div>
-                  <div className="result-value">${Number(results.presentValue).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+                  <div className="result-value">{formatCurrency(results.presentValue)}</div>
                 </div>
               )}
               {activeCalc === 'annuity-payment' && results && 'payment' in results && (
                 <div className="result-item highlight">
                   <div className="result-label">Payment Amount</div>
-                  <div className="result-value">${Number(results.payment).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+                  <div className="result-value">{formatCurrency(results.payment)}</div>
                 </div>
               )}
             </div>
