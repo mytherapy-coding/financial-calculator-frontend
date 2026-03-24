@@ -9,9 +9,9 @@ function AmortizationChart({ schedule = [] }) {
     return <div className="amortization-chart">No amortization data available</div>
   }
 
-  // Group by year for yearly view
+  // Group by year for yearly view (Year 0 = first 12 payments, Year 1 = next 12, …)
   const yearlyData = schedule.reduce((acc, payment, index) => {
-    const year = Math.floor(index / 12) + 1
+    const year = Math.floor(index / 12)
     if (!acc[year]) {
       acc[year] = {
         year,
