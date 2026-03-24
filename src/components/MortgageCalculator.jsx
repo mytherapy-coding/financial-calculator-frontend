@@ -77,6 +77,7 @@ function MortgageCalculator() {
     if (!results) return
 
     const shareUrl = generateShareUrl(window.location.origin + window.location.pathname, {
+      tab: 'mortgage',
       principal: inputs.principal,
       rate: inputs.annualRate,
       years: inputs.years,
@@ -88,12 +89,9 @@ function MortgageCalculator() {
     })
 
     const shareText = formatMortgageShareText(inputs, results)
-    
+
     const result = await shareContent('Mortgage Calculation', shareText, shareUrl)
 
-    if (result.cancelled) {
-      return
-    }
     if (result.success) {
       setShareStatus(result.method === 'native' ? 'shared' : 'copied')
       setTimeout(() => setShareStatus(null), 3000)
@@ -279,9 +277,15 @@ function MortgageCalculator() {
               <button
                 className="share-button"
                 onClick={handleShare}
-                title="Share calculation"
+                title="Copy your results and a link to reload this calculation"
               >
-                {shareStatus === 'shared' ? '✓ Shared' : shareStatus === 'copied' ? '✓ Copied' : shareStatus === 'error' ? '✗ Error' : '📤 Share'}
+                {shareStatus === 'shared'
+                  ? '✓ Shared'
+                  : shareStatus === 'copied'
+                    ? '✓ Copied'
+                    : shareStatus === 'error'
+                      ? '✗ Copy failed'
+                      : '📋 Copy & share'}
               </button>
             )}
           </div>

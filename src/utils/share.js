@@ -8,23 +8,30 @@ import { formatCurrency } from './formatCurrency'
  */
 export async function copyToClipboard(text) {
   try {
-    if (navigator.clipboard && window.isSecureContext) {
+    if (navigator.clipboard?.writeText) {
       await navigator.clipboard.writeText(text)
       return true
     }
   } catch (err) {
     console.warn('Clipboard API failed, trying fallback:', err)
   }
-  // Fallback for older browsers, non-HTTPS (except localhost), or denied permission
+  // Fallback: execCommand (works in more contexts when textarea is briefly visible)
   try {
     const textArea = document.createElement('textarea')
     textArea.value = text
     textArea.setAttribute('readonly', '')
     textArea.style.position = 'fixed'
-    textArea.style.left = '-999999px'
     textArea.style.top = '0'
+    textArea.style.left = '0'
+    textArea.style.width = '2px'
+    textArea.style.height = '2px'
+    textArea.style.padding = '0'
+    textArea.style.border = 'none'
+    textArea.style.outline = 'none'
+    textArea.style.opacity = '0'
+    textArea.style.zIndex = '-1'
     document.body.appendChild(textArea)
-    textArea.focus()
+    textArea.focus({ preventScroll: true })
     textArea.select()
     textArea.setSelectionRange(0, text.length)
     const ok = document.execCommand('copy')
@@ -50,39 +57,40 @@ export function generateShareUrl(baseUrl, params) {
 }
 
 /**
- * Share via Web Share API (mobile) or fallback to clipboard
+ * Copy summary + link to clipboard (always), then optionally open native share (mobile).
+ * Copy-first ensures desktop users reliably get text + reloadable URL.
  */
 export async function shareContent(title, text, url) {
-  const shareData = {
-    title,
-    text,
+  const fullText = [
+    text.trim(),
+    '',
+    '---',
+    'Open this link to reload your inputs:',
     url,
+  ].join('\n')
+
+  const copied = await copyToClipboard(fullText)
+  if (!copied) {
+    return { success: false, method: 'clipboard' }
   }
 
-  // Try native share when available. Do not require canShare — many browsers omit it
-  // or report false on desktop even when share works; others need canShare === true.
+  const shareData = { title, text: text.trim(), url }
   if (typeof navigator.share === 'function') {
     const mayShare =
       typeof navigator.canShare !== 'function' || navigator.canShare(shareData)
     if (mayShare) {
       try {
         await navigator.share(shareData)
-        return { success: true, method: 'native' }
+        return { success: true, method: 'native', url }
       } catch (err) {
-        if (err.name === 'AbortError') {
-          return { success: false, cancelled: true }
+        if (err.name !== 'AbortError') {
+          console.warn('Native share failed (clipboard already copied):', err)
         }
-        console.warn('Native share failed, falling back to clipboard:', err)
       }
     }
   }
 
-  // Fallback: copy full message + link (URL alone was easy to miss as "nothing happened")
-  const fallbackText = `${text}\n\n${url}`.trim()
-  const success = await copyToClipboard(fallbackText)
-  return success
-    ? { success: true, method: 'clipboard', url }
-    : { success: false, method: 'clipboard' }
+  return { success: true, method: 'clipboard', url }
 }
 
 /**
@@ -95,18 +103,33 @@ export function formatMortgageShareText(inputs, results) {
     (inputs.pmi || 0) / 12 +
     (inputs.hoa || 0)
 
+  const extras = []
+  if (inputs.propertyTax > 0) {
+    extras.push(`Property Tax (annual): ${formatCurrency(inputs.propertyTax)}`)
+  }
+  if (inputs.homeInsurance > 0) {
+    extras.push(`Home Insurance (annual): ${formatCurrency(inputs.homeInsurance)}`)
+  }
+  if (inputs.pmi > 0) {
+    extras.push(`PMI (annual): ${formatCurrency(inputs.pmi)}`)
+  }
+  if (inputs.hoa > 0) {
+    extras.push(`HOA (monthly): ${formatCurrency(inputs.hoa)}`)
+  }
+  if (inputs.extraPayment > 0) {
+    extras.push(`Extra Payment (monthly): ${formatCurrency(inputs.extraPayment)}`)
+  }
+  const extrasBlock = extras.length ? `\n${extras.join('\n')}\n` : '\n'
+
   return `Mortgage Calculation Results:
 
 Loan Amount: ${formatCurrency(inputs.principal)}
 Interest Rate: ${inputs.annualRate}%
-Loan Term: ${inputs.years} years
-
-Monthly Payment: ${formatCurrency(totalMonthly)}
+Loan Term: ${inputs.years} years${extrasBlock}Monthly Payment (incl. escrows): ${formatCurrency(totalMonthly)}
+Monthly Principal & Interest: ${formatCurrency(results.monthly_payment)}
 Total Interest: ${formatCurrency(results.total_interest)}
 Total Paid: ${formatCurrency(results.total_paid)}
-Payoff Date: ${results.payoff_date}
-
-Calculate yours at: https://mytherapy-coding.github.io/financial-calculator-frontend/`
+Payoff Date: ${results.payoff_date}`
 }
 
 /**
@@ -140,8 +163,6 @@ export function formatTVMShareText(calcType, inputs, results) {
     text += `Payments per Year: ${inputs.paymentsPerYear}\n\n`
     text += `Payment Amount: ${formatCurrency(results.payment)}`
   }
-
-  text += `\n\nCalculate yours at: https://mytherapy-coding.github.io/financial-calculator-frontend/`
 
   return text
 }

@@ -87,9 +87,6 @@ function TVMCalculator() {
     
     const result = await shareContent(`${activeCalc === 'future-value' ? 'Future Value' : activeCalc === 'present-value' ? 'Present Value' : 'Annuity Payment'} Calculation`, shareText, shareUrl)
 
-    if (result.cancelled) {
-      return
-    }
     if (result.success) {
       setShareStatus(result.method === 'native' ? 'shared' : 'copied')
       setTimeout(() => setShareStatus(null), 3000)
@@ -350,9 +347,15 @@ function TVMCalculator() {
               <button
                 className="share-button"
                 onClick={handleShare}
-                title="Share calculation"
+                title="Copy your results and a link to reload this calculation"
               >
-                {shareStatus === 'shared' ? '✓ Shared' : shareStatus === 'copied' ? '✓ Copied' : shareStatus === 'error' ? '✗ Error' : '📤 Share'}
+                {shareStatus === 'shared'
+                  ? '✓ Shared'
+                  : shareStatus === 'copied'
+                    ? '✓ Copied'
+                    : shareStatus === 'error'
+                      ? '✗ Copy failed'
+                      : '📋 Copy & share'}
               </button>
             )}
           </div>
