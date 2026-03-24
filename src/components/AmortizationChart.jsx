@@ -10,45 +10,63 @@ function AmortizationChart({ schedule = [] }) {
     return <div className="amortization-chart">No amortization data available</div>
   }
 
-  // Group by year for yearly view (Year 0 = first 12 payments, Year 1 = next 12, …)
+  // Balance before any payment (loan amount) — first row is after payment 1
+  const first = schedule[0]
+  const initialBalance =
+    Number(first.remaining_balance) + Number(first.principal_payment)
+
+  // Group calendar years of payments: bucket 0 = months 0–11 (displayed as Year 1), etc.
   const yearlyData = schedule.reduce((acc, payment, index) => {
-    const year = Math.floor(index / 12)
-    if (!acc[year]) {
-      acc[year] = {
-        year,
+    const bucket = Math.floor(index / 12)
+    if (!acc[bucket]) {
+      acc[bucket] = {
+        bucket,
         principal: 0,
         interest: 0,
         balance: payment.remaining_balance,
       }
     }
-    acc[year].principal += payment.principal_payment
-    acc[year].interest += payment.interest_payment
-    acc[year].balance = payment.remaining_balance
+    acc[bucket].principal += payment.principal_payment
+    acc[bucket].interest += payment.interest_payment
+    acc[bucket].balance = payment.remaining_balance
     return acc
   }, {})
 
-  const chartData = viewMode === 'yearly'
-    ? Object.values(yearlyData)
-    : schedule.map((p, i) => ({
-        month: i + 1,
-        principal: p.principal_payment,
-        interest: p.interest_payment,
-        balance: p.remaining_balance,
-      }))
+  const yearlyBuckets = Object.keys(yearlyData)
+    .map(Number)
+    .sort((a, b) => a - b)
+    .map((k) => yearlyData[k])
 
-  const displayData = viewMode === 'yearly'
-    ? chartData.map(d => ({
-        period: `Year ${d.year}`,
-        principal: d.principal,
-        interest: d.interest,
-        balance: d.balance,
-      }))
-    : chartData.map(d => ({
-        period: `Month ${d.month}`,
-        principal: d.principal,
-        interest: d.interest,
-        balance: d.balance,
-      }))
+  const displayData =
+    viewMode === 'yearly'
+      ? [
+          {
+            period: 'Year 0',
+            principal: 0,
+            interest: 0,
+            balance: initialBalance,
+          },
+          ...yearlyBuckets.map((d) => ({
+            period: `Year ${d.bucket + 1}`,
+            principal: d.principal,
+            interest: d.interest,
+            balance: d.balance,
+          })),
+        ]
+      : [
+          {
+            period: 'Month 0',
+            principal: 0,
+            interest: 0,
+            balance: initialBalance,
+          },
+          ...schedule.map((p, i) => ({
+            period: `Month ${i + 1}`,
+            principal: p.principal_payment,
+            interest: p.interest_payment,
+            balance: p.remaining_balance,
+          })),
+        ]
 
   return (
     <div className="amortization-chart">
