@@ -71,6 +71,7 @@ function TVMCalculator() {
     if (!results) return
 
     const shareUrl = generateShareUrl(window.location.origin + window.location.pathname, {
+      tab: 'tvm',
       calc: activeCalc,
       principal: activeCalc === 'future-value' ? inputs.principal : undefined,
       futureValue: activeCalc === 'present-value' ? inputs.futureValue : undefined,
@@ -84,7 +85,10 @@ function TVMCalculator() {
     const shareText = formatTVMShareText(activeCalc, inputs, results)
     
     const result = await shareContent(`${activeCalc === 'future-value' ? 'Future Value' : activeCalc === 'present-value' ? 'Present Value' : 'Annuity Payment'} Calculation`, shareText, shareUrl)
-    
+
+    if (result.cancelled) {
+      return
+    }
     if (result.success) {
       setShareStatus(result.method === 'native' ? 'shared' : 'copied')
       setTimeout(() => setShareStatus(null), 3000)

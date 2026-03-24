@@ -7,24 +7,31 @@
  */
 export async function copyToClipboard(text) {
   try {
-    await navigator.clipboard.writeText(text)
-    return true
+    if (navigator.clipboard && window.isSecureContext) {
+      await navigator.clipboard.writeText(text)
+      return true
+    }
   } catch (err) {
-    // Fallback for older browsers
+    console.warn('Clipboard API failed, trying fallback:', err)
+  }
+  // Fallback for older browsers, non-HTTPS (except localhost), or denied permission
+  try {
     const textArea = document.createElement('textarea')
     textArea.value = text
+    textArea.setAttribute('readonly', '')
     textArea.style.position = 'fixed'
     textArea.style.left = '-999999px'
+    textArea.style.top = '0'
     document.body.appendChild(textArea)
+    textArea.focus()
     textArea.select()
-    try {
-      document.execCommand('copy')
-      document.body.removeChild(textArea)
-      return true
-    } catch (err) {
-      document.body.removeChild(textArea)
-      return false
-    }
+    textArea.setSelectionRange(0, text.length)
+    const ok = document.execCommand('copy')
+    document.body.removeChild(textArea)
+    return ok
+  } catch (err) {
+    console.warn('execCommand copy failed:', err)
+    return false
   }
 }
 
@@ -51,20 +58,30 @@ export async function shareContent(title, text, url) {
     url,
   }
 
-  if (navigator.share && navigator.canShare && navigator.canShare(shareData)) {
-    try {
-      await navigator.share(shareData)
-      return { success: true, method: 'native' }
-    } catch (err) {
-      if (err.name !== 'AbortError') {
-        console.error('Error sharing:', err)
+  // Try native share when available. Do not require canShare — many browsers omit it
+  // or report false on desktop even when share works; others need canShare === true.
+  if (typeof navigator.share === 'function') {
+    const mayShare =
+      typeof navigator.canShare !== 'function' || navigator.canShare(shareData)
+    if (mayShare) {
+      try {
+        await navigator.share(shareData)
+        return { success: true, method: 'native' }
+      } catch (err) {
+        if (err.name === 'AbortError') {
+          return { success: false, cancelled: true }
+        }
+        console.warn('Native share failed, falling back to clipboard:', err)
       }
     }
   }
 
-  // Fallback to clipboard
-  const success = await copyToClipboard(url)
-  return { success, method: 'clipboard', url }
+  // Fallback: copy full message + link (URL alone was easy to miss as "nothing happened")
+  const fallbackText = `${text}\n\n${url}`.trim()
+  const success = await copyToClipboard(fallbackText)
+  return success
+    ? { success: true, method: 'clipboard', url }
+    : { success: false, method: 'clipboard' }
 }
 
 /**

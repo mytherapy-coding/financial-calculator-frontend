@@ -89,7 +89,10 @@ function MortgageCalculator() {
     const shareText = formatMortgageShareText(inputs, results)
     
     const result = await shareContent('Mortgage Calculation', shareText, shareUrl)
-    
+
+    if (result.cancelled) {
+      return
+    }
     if (result.success) {
       setShareStatus(result.method === 'native' ? 'shared' : 'copied')
       setTimeout(() => setShareStatus(null), 3000)
