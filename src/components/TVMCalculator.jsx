@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { tvmAPI } from '../services/api'
 import { useLocalStorage } from '../hooks/useLocalStorage'
 import { shareContent, formatTVMShareText, generateShareUrl } from '../utils/share'
@@ -27,7 +27,17 @@ function TVMCalculator() {
     }
   }
 
-  const [inputs, setInputs] = useLocalStorage('tvm-inputs', getInitialInputs())
+  const [inputs, setInputs] = useLocalStorage('tvm-inputs', getInitialInputs, {
+    preferUrlParams: () => {
+      const p = new URLSearchParams(window.location.search)
+      // Only override localStorage for shared links, not plain ?tab=tvm
+      return (
+        p.has('calc') ||
+        (p.get('tab') === 'tvm' &&
+          (p.has('principal') || p.has('futureValue') || p.has('presentValue') || p.has('rate')))
+      )
+    },
+  })
   const [shareStatus, setShareStatus] = useState(null)
   const [results, setResults] = useState(null)
   const [loading, setLoading] = useState(false)
@@ -96,7 +106,7 @@ function TVMCalculator() {
     }
   }
 
-  const calculate = async () => {
+  const calculate = useCallback(async () => {
     setLoading(true)
     setError(null)
     try {
@@ -137,7 +147,15 @@ function TVMCalculator() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [activeCalc, inputs])
+
+  const autoCalcFromSharedUrlRan = useRef(false)
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    if (!params.has('calc') || autoCalcFromSharedUrlRan.current) return
+    autoCalcFromSharedUrlRan.current = true
+    calculate()
+  }, [calculate])
 
   return (
     <div className="tvm-calculator">

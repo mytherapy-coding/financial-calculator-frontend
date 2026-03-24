@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { mortgageAPI } from '../services/api'
 import AmortizationChart from './AmortizationChart'
 import PaymentBreakdownChart from './PaymentBreakdownChart'
@@ -35,7 +35,12 @@ function MortgageCalculator() {
     }
   }
 
-  const [inputs, setInputs] = useLocalStorage('mortgage-inputs', getInitialInputs())
+  const [inputs, setInputs] = useLocalStorage('mortgage-inputs', getInitialInputs, {
+    preferUrlParams: () => {
+      const p = new URLSearchParams(window.location.search)
+      return p.has('principal') || p.has('rate') || p.has('years')
+    },
+  })
   const [shareStatus, setShareStatus] = useState(null)
 
   const [results, setResults] = useState(null)
@@ -44,22 +49,21 @@ function MortgageCalculator() {
   const [showAmortization, setShowAmortization] = useState(false)
   const [amortizationData, setAmortizationData] = useState(null)
 
-  // Sync URL params on mount
+  // Re-apply URL params when the address bar changes (e.g. in-page navigation)
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
-    if (params.toString()) {
-      const urlInputs = {
-        principal: params.get('principal') ? parseFloat(params.get('principal')) : 300000,
-        annualRate: params.get('rate') ? parseFloat(params.get('rate')) : 4.0,
-        years: params.get('years') ? parseFloat(params.get('years')) : 30,
-        propertyTax: params.get('propertyTax') ? parseFloat(params.get('propertyTax')) : 0,
-        homeInsurance: params.get('homeInsurance') ? parseFloat(params.get('homeInsurance')) : 0,
-        pmi: params.get('pmi') ? parseFloat(params.get('pmi')) : 0,
-        hoa: params.get('hoa') ? parseFloat(params.get('hoa')) : 0,
-        extraPayment: params.get('extraPayment') ? parseFloat(params.get('extraPayment')) : 0,
-      }
-      setInputs(urlInputs)
+    if (!params.toString()) return
+    const urlInputs = {
+      principal: params.get('principal') ? parseFloat(params.get('principal')) : 300000,
+      annualRate: params.get('rate') ? parseFloat(params.get('rate')) : 4.0,
+      years: params.get('years') ? parseFloat(params.get('years')) : 30,
+      propertyTax: params.get('propertyTax') ? parseFloat(params.get('propertyTax')) : 0,
+      homeInsurance: params.get('homeInsurance') ? parseFloat(params.get('homeInsurance')) : 0,
+      pmi: params.get('pmi') ? parseFloat(params.get('pmi')) : 0,
+      hoa: params.get('hoa') ? parseFloat(params.get('hoa')) : 0,
+      extraPayment: params.get('extraPayment') ? parseFloat(params.get('extraPayment')) : 0,
     }
+    setInputs(urlInputs)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -101,7 +105,7 @@ function MortgageCalculator() {
     }
   }
 
-  const calculateMortgage = async () => {
+  const calculateMortgage = useCallback(async () => {
     setLoading(true)
     setError(null)
     try {
@@ -134,7 +138,15 @@ function MortgageCalculator() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [inputs])
+
+  const autoCalcFromSharedUrlRan = useRef(false)
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    if (!params.has('principal') || autoCalcFromSharedUrlRan.current) return
+    autoCalcFromSharedUrlRan.current = true
+    calculateMortgage()
+  }, [calculateMortgage])
 
   const loadAmortizationSchedule = async () => {
     if (amortizationData) {

@@ -65,7 +65,7 @@ export async function shareContent(title, text, url) {
     text.trim(),
     '',
     '---',
-    'Open this link to reload your inputs:',
+    'Open this link in a browser — your inputs load and the calculation runs automatically:',
     url,
   ].join('\n')
 
@@ -74,13 +74,14 @@ export async function shareContent(title, text, url) {
     return { success: false, method: 'clipboard' }
   }
 
-  const shareData = { title, text: text.trim(), url }
+  // Native share: single `text` block (includes the link once). Omitting `url` avoids duplicate links in many apps.
   if (typeof navigator.share === 'function') {
+    const sharePayload = { title, text: fullText }
     const mayShare =
-      typeof navigator.canShare !== 'function' || navigator.canShare(shareData)
+      typeof navigator.canShare !== 'function' || navigator.canShare(sharePayload)
     if (mayShare) {
       try {
-        await navigator.share(shareData)
+        await navigator.share(sharePayload)
         return { success: true, method: 'native', url }
       } catch (err) {
         if (err.name !== 'AbortError') {

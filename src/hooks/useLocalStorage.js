@@ -1,16 +1,28 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 
 /**
  * Custom hook for localStorage persistence
+ * @param {string} key
+ * @param {any|() => any} initialValue — value or function (called once)
+ * @param {{ preferUrlParams?: () => boolean }} options — if preferUrlParams() is true, skip localStorage and use initialValue (so shared URLs win over saved form data)
  */
-export function useLocalStorage(key, initialValue) {
+export function useLocalStorage(key, initialValue, options = {}) {
+  const { preferUrlParams } = options
+
+  const resolveInitial = () =>
+    typeof initialValue === 'function' ? initialValue() : initialValue
+
   const [storedValue, setStoredValue] = useState(() => {
     try {
+      if (typeof preferUrlParams === 'function' && preferUrlParams()) {
+        return resolveInitial()
+      }
       const item = window.localStorage.getItem(key)
-      return item ? JSON.parse(item) : initialValue
+      if (item) return JSON.parse(item)
+      return resolveInitial()
     } catch (error) {
       console.error(`Error loading ${key} from localStorage:`, error)
-      return initialValue
+      return resolveInitial()
     }
   })
 
