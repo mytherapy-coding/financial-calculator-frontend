@@ -28,7 +28,7 @@ function AmortizationChart({ schedule = [] }) {
 
   const chartData = viewMode === 'yearly'
     ? Object.values(yearlyData)
-    : schedule.slice(0, 360).map((p, i) => ({
+    : schedule.map((p, i) => ({
         month: i + 1,
         principal: p.principal_payment,
         interest: p.interest_payment,

@@ -146,7 +146,7 @@ function MortgageCalculator() {
         inputs.principal,
         inputs.annualRate / 100,
         inputs.years,
-        Math.min(inputs.years * 12, 360)
+        Math.min(inputs.years * 12, 600)
       )
       setAmortizationData(data)
       setShowAmortization(true)

@@ -143,19 +143,31 @@ function TVMCalculator() {
         <div className="calc-tabs">
           <button
             className={`calc-tab ${activeCalc === 'future-value' ? 'active' : ''}`}
-            onClick={() => setActiveCalc('future-value')}
+            onClick={() => {
+              setActiveCalc('future-value')
+              setResults(null)
+              setError(null)
+            }}
           >
             Future Value
           </button>
           <button
             className={`calc-tab ${activeCalc === 'present-value' ? 'active' : ''}`}
-            onClick={() => setActiveCalc('present-value')}
+            onClick={() => {
+              setActiveCalc('present-value')
+              setResults(null)
+              setError(null)
+            }}
           >
             Present Value
           </button>
           <button
             className={`calc-tab ${activeCalc === 'annuity-payment' ? 'active' : ''}`}
-            onClick={() => setActiveCalc('annuity-payment')}
+            onClick={() => {
+              setActiveCalc('annuity-payment')
+              setResults(null)
+              setError(null)
+            }}
           >
             Annuity Payment
           </button>
@@ -347,22 +359,22 @@ function TVMCalculator() {
           <div className="results-card">
             <h3 className="results-title">Results</h3>
             <div className="results-content">
-              {results.futureValue && (
+              {activeCalc === 'future-value' && results && 'futureValue' in results && (
                 <div className="result-item highlight">
                   <div className="result-label">Future Value</div>
-                  <div className="result-value">${results.futureValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+                  <div className="result-value">${Number(results.futureValue).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
                 </div>
               )}
-              {results.presentValue && (
+              {activeCalc === 'present-value' && results && 'presentValue' in results && (
                 <div className="result-item highlight">
                   <div className="result-label">Present Value</div>
-                  <div className="result-value">${results.presentValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+                  <div className="result-value">${Number(results.presentValue).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
                 </div>
               )}
-              {results.payment && (
+              {activeCalc === 'annuity-payment' && results && 'payment' in results && (
                 <div className="result-item highlight">
                   <div className="result-label">Payment Amount</div>
-                  <div className="result-value">${results.payment.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+                  <div className="result-value">${Number(results.payment).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
                 </div>
               )}
             </div>

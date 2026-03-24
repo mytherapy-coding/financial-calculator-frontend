@@ -57,7 +57,7 @@ export const mortgageAPI = {
     return data
   },
 
-  amortizationSchedule: async (principal, annualRate, years, maxMonths = 360) => {
+  amortizationSchedule: async (principal, annualRate, years, maxMonths = 600) => {
     const data = await apiRequest('/v1/mortgage/amortization-schedule', {
       method: 'POST',
       body: JSON.stringify({ principal, annual_rate: annualRate, years, max_months: maxMonths }),
