@@ -175,7 +175,12 @@ function TVMCalculator() {
   const autoCalcFromSharedUrlRan = useRef(false)
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
-    if (!params.has('calc') || autoCalcFromSharedUrlRan.current) return
+    if (autoCalcFromSharedUrlRan.current) return
+    const hasSharedTvm =
+      params.has('calc') ||
+      (params.get('tab') === 'tvm' &&
+        (params.has('principal') || params.has('futureValue') || params.has('presentValue') || params.has('rate')))
+    if (!hasSharedTvm) return
     autoCalcFromSharedUrlRan.current = true
     calculate()
   }, [calculate])
