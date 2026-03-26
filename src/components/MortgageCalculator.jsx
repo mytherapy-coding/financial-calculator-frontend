@@ -70,7 +70,6 @@ function MortgageCalculator() {
   const [error, setError] = useState(null)
   const [showAmortization, setShowAmortization] = useState(false)
   const [amortizationData, setAmortizationData] = useState(null)
-  const [, setInputRenderTick] = useState(0)
 
   // Re-apply URL only when it contains loan inputs (avoid wiping saved data for ?shared=… only)
   useEffect(() => {
@@ -96,27 +95,12 @@ function MortgageCalculator() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const handleInputChange = (field, value, inputEl) => {
+  const handleInputChange = (field, value) => {
     const normalizedValue = normalizeNumber(value, 0)
-    const shouldForceRerender =
-      typeof value === 'string' &&
-      value !== '' &&
-      value !== String(normalizedValue)
-    if (inputEl && typeof value === 'string') {
-      const canonical = String(normalizedValue)
-      if (value !== '' && value !== canonical) {
-        // Keep the DOM input canonical so prefixed zeros do not linger in number fields.
-        inputEl.value = canonical
-      }
-    }
     setInputs(prev => {
       const updated = { ...prev, [field]: normalizedValue }
       return updated
     })
-    if (shouldForceRerender) {
-      // Force a render when numeric value is unchanged (e.g. 03456 -> 3456).
-      setInputRenderTick(tick => tick + 1)
-    }
     setResults(null)
     setError(null)
     setShareStatus(null)
@@ -235,7 +219,7 @@ function MortgageCalculator() {
                 id="principal"
                 type="number"
                 value={inputs.principal}
-                onChange={(e) => handleInputChange('principal', e.target.value, e.target)}
+                onChange={(e) => handleInputChange('principal', e.target.value)}
                 placeholder="300000"
               />
             </div>
@@ -247,7 +231,7 @@ function MortgageCalculator() {
                 type="number"
                 step="0.01"
                 value={inputs.annualRate}
-                onChange={(e) => handleInputChange('annualRate', e.target.value, e.target)}
+                onChange={(e) => handleInputChange('annualRate', e.target.value)}
                 placeholder="4.0"
               />
             </div>
@@ -258,7 +242,7 @@ function MortgageCalculator() {
                 id="years"
                 type="number"
                 value={inputs.years}
-                onChange={(e) => handleInputChange('years', e.target.value, e.target)}
+                onChange={(e) => handleInputChange('years', e.target.value)}
                 placeholder="30"
               />
             </div>
@@ -269,7 +253,7 @@ function MortgageCalculator() {
                 id="propertyTax"
                 type="number"
                 value={inputs.propertyTax}
-                onChange={(e) => handleInputChange('propertyTax', e.target.value, e.target)}
+                onChange={(e) => handleInputChange('propertyTax', e.target.value)}
                 placeholder="0"
               />
             </div>
@@ -280,7 +264,7 @@ function MortgageCalculator() {
                 id="homeInsurance"
                 type="number"
                 value={inputs.homeInsurance}
-                onChange={(e) => handleInputChange('homeInsurance', e.target.value, e.target)}
+                onChange={(e) => handleInputChange('homeInsurance', e.target.value)}
                 placeholder="0"
               />
             </div>
@@ -291,7 +275,7 @@ function MortgageCalculator() {
                 id="pmi"
                 type="number"
                 value={inputs.pmi}
-                onChange={(e) => handleInputChange('pmi', e.target.value, e.target)}
+                onChange={(e) => handleInputChange('pmi', e.target.value)}
                 placeholder="0"
               />
             </div>
@@ -302,7 +286,7 @@ function MortgageCalculator() {
                 id="hoa"
                 type="number"
                 value={inputs.hoa}
-                onChange={(e) => handleInputChange('hoa', e.target.value, e.target)}
+                onChange={(e) => handleInputChange('hoa', e.target.value)}
                 placeholder="0"
               />
             </div>
@@ -313,7 +297,7 @@ function MortgageCalculator() {
                 id="extraPayment"
                 type="number"
                 value={inputs.extraPayment}
-                onChange={(e) => handleInputChange('extraPayment', e.target.value, e.target)}
+                onChange={(e) => handleInputChange('extraPayment', e.target.value)}
                 placeholder="0"
               />
             </div>
