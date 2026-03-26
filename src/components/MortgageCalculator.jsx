@@ -7,6 +7,22 @@ import { copyToClipboard, generateShareUrl, getSharedLinkDateParam } from '../ut
 import { formatCurrency, formatInteger } from '../utils/formatCurrency'
 import './MortgageCalculator.css'
 
+const normalizeNumber = (value, fallback = 0) => {
+  const n = Number(value)
+  return Number.isFinite(n) ? n : fallback
+}
+
+const normalizeMortgageInputs = (raw) => ({
+  principal: normalizeNumber(raw.principal, 300000),
+  annualRate: normalizeNumber(raw.annualRate, 4.0),
+  years: normalizeNumber(raw.years, 30),
+  propertyTax: normalizeNumber(raw.propertyTax, 0),
+  homeInsurance: normalizeNumber(raw.homeInsurance, 0),
+  pmi: normalizeNumber(raw.pmi, 0),
+  hoa: normalizeNumber(raw.hoa, 0),
+  extraPayment: normalizeNumber(raw.extraPayment, 0),
+})
+
 function MortgageCalculator() {
   // Load from URL params or localStorage
   const getInitialInputs = () => {
@@ -23,7 +39,7 @@ function MortgageCalculator() {
     }
     
     // Use URL params if available, otherwise use defaults
-    return {
+    return normalizeMortgageInputs({
       principal: urlInputs.principal ?? 300000,
       annualRate: urlInputs.annualRate ?? 4.0,
       years: urlInputs.years ?? 30,
@@ -32,7 +48,7 @@ function MortgageCalculator() {
       pmi: urlInputs.pmi ?? 0,
       hoa: urlInputs.hoa ?? 0,
       extraPayment: urlInputs.extraPayment ?? 0,
-    }
+    })
   }
 
   const [inputs, setInputs] = useLocalStorage('mortgage-inputs', getInitialInputs, {
@@ -63,13 +79,19 @@ function MortgageCalculator() {
       hoa: params.get('hoa') ? parseFloat(params.get('hoa')) : 0,
       extraPayment: params.get('extraPayment') ? parseFloat(params.get('extraPayment')) : 0,
     }
-    setInputs(urlInputs)
+    setInputs(normalizeMortgageInputs(urlInputs))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  // Normalize older string-based localStorage values (e.g. "0150000" -> 150000).
+  useEffect(() => {
+    setInputs(prev => normalizeMortgageInputs(prev))
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const handleInputChange = (field, value) => {
     setInputs(prev => {
-      const updated = { ...prev, [field]: parseFloat(value) || 0 }
+      const updated = { ...prev, [field]: normalizeNumber(value, 0) }
       return updated
     })
     setResults(null)
