@@ -36,6 +36,18 @@ npm run build
 
 The built files will be in the `dist` directory.
 
+### Verify Calculations (sanity checks)
+
+This repo includes a lightweight script that spot-checks a couple reference financial formulas (mortgage payment + compound future value).
+
+```bash
+# Verify reference formulas locally (no network)
+npm run verify:calculations
+
+# Also verify against the hosted API (requires network)
+VERIFY_API=1 npm run verify:calculations
+```
+
 ## Configuration
 
 ### API Base URL
