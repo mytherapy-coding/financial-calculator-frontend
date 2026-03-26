@@ -70,6 +70,7 @@ function MortgageCalculator() {
   const [error, setError] = useState(null)
   const [showAmortization, setShowAmortization] = useState(false)
   const [amortizationData, setAmortizationData] = useState(null)
+  const [, setInputRenderTick] = useState(0)
 
   // Re-apply URL only when it contains loan inputs (avoid wiping saved data for ?shared=… only)
   useEffect(() => {
@@ -97,6 +98,10 @@ function MortgageCalculator() {
 
   const handleInputChange = (field, value, inputEl) => {
     const normalizedValue = normalizeNumber(value, 0)
+    const shouldForceRerender =
+      typeof value === 'string' &&
+      value !== '' &&
+      value !== String(normalizedValue)
     if (inputEl && typeof value === 'string') {
       const canonical = String(normalizedValue)
       if (value !== '' && value !== canonical) {
@@ -108,6 +113,10 @@ function MortgageCalculator() {
       const updated = { ...prev, [field]: normalizedValue }
       return updated
     })
+    if (shouldForceRerender) {
+      // Force a render when numeric value is unchanged (e.g. 03456 -> 3456).
+      setInputRenderTick(tick => tick + 1)
+    }
     setResults(null)
     setError(null)
     setShareStatus(null)
