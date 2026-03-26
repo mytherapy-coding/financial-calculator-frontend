@@ -7,14 +7,8 @@ import { copyToClipboard, generateShareUrl, getSharedLinkDateParam } from '../ut
 import { formatCurrency, formatInteger } from '../utils/formatCurrency'
 import './MortgageCalculator.css'
 
-const stripLeadingZeros = (value) => {
-  if (typeof value !== 'string') return value
-  if (value === '') return value
-  return value.replace(/^0+(?=\d)/, '')
-}
-
 const normalizeNumber = (value, fallback = 0) => {
-  const n = Number(stripLeadingZeros(value))
+  const n = Number(value)
   return Number.isFinite(n) ? n : fallback
 }
 
@@ -96,9 +90,8 @@ function MortgageCalculator() {
   }, [])
 
   const handleInputChange = (field, value) => {
-    const normalizedValue = normalizeNumber(value, 0)
     setInputs(prev => {
-      const updated = { ...prev, [field]: normalizedValue }
+      const updated = { ...prev, [field]: parseFloat(value) || 0 }
       return updated
     })
     setResults(null)
