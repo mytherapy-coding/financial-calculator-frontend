@@ -7,8 +7,14 @@ import { copyToClipboard, generateShareUrl, getSharedLinkDateParam } from '../ut
 import { formatCurrency, formatInteger } from '../utils/formatCurrency'
 import './MortgageCalculator.css'
 
+const stripLeadingZeros = (value) => {
+  if (typeof value !== 'string') return value
+  if (value === '') return value
+  return value.replace(/^0+(?=\d)/, '')
+}
+
 const normalizeNumber = (value, fallback = 0) => {
-  const n = Number(value)
+  const n = Number(stripLeadingZeros(value))
   return Number.isFinite(n) ? n : fallback
 }
 
