@@ -7,16 +7,6 @@ import './TVMCalculator.css'
 
 const TVM_ACTIVE_CALC_KEY = 'tvm-active-calc'
 
-const normalizeInputNumber = (value) => {
-  if (typeof value === 'string' && value !== '') {
-    const trimmed = value.replace(/^0+(?=\d)/, '')
-    const parsed = parseFloat(trimmed)
-    return Number.isFinite(parsed) ? parsed : 0
-  }
-  const parsed = parseFloat(value)
-  return Number.isFinite(parsed) ? parsed : 0
-}
-
 function TVMCalculator() {
   const getInitialCalc = () => {
     const params = new URLSearchParams(window.location.search)
@@ -106,7 +96,8 @@ function TVMCalculator() {
         return { ...prev, [field]: parseInt(value) || 0 }
       }
       // Handle number inputs
-      return { ...prev, [field]: normalizeInputNumber(value) }
+      const n = parseFloat(value)
+      return { ...prev, [field]: Number.isFinite(n) ? n : 0 }
     })
     setResults(null)
     setError(null)

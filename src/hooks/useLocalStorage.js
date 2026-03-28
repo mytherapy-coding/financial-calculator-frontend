@@ -34,13 +34,22 @@ export function useLocalStorage(key, initialValue, options = {}) {
   })
 
   const setValue = (value) => {
-    try {
-      const valueToStore = value instanceof Function ? value(storedValue) : value
-      setStoredValue(valueToStore)
-      window.localStorage.setItem(key, JSON.stringify(valueToStore))
-    } catch (error) {
-      console.error(`Error saving ${key} to localStorage:`, error)
-    }
+    setStoredValue((prev) => {
+      let valueToStore
+      try {
+        valueToStore = value instanceof Function ? value(prev) : value
+      } catch (error) {
+        console.error(`Error updating ${key}:`, error)
+        return prev
+      }
+      try {
+        window.localStorage.setItem(key, JSON.stringify(valueToStore))
+      } catch (error) {
+        console.error(`Error saving ${key} to localStorage:`, error)
+        return prev
+      }
+      return valueToStore
+    })
   }
 
   return [storedValue, setValue]

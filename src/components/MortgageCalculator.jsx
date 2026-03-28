@@ -7,14 +7,9 @@ import { copyToClipboard, generateShareUrl, getSharedLinkDateParam } from '../ut
 import { formatCurrency, formatInteger } from '../utils/formatCurrency'
 import './MortgageCalculator.css'
 
-const stripLeadingZeros = (value) => {
-  if (typeof value !== 'string') return value
-  if (value === '') return value
-  return value.replace(/^0+(?=\d)/, '')
-}
-
+/** Coerce URL/localStorage values to numbers (handles legacy string values). */
 const normalizeNumber = (value, fallback = 0) => {
-  const n = Number(stripLeadingZeros(value))
+  const n = typeof value === 'string' ? parseFloat(value) : Number(value)
   return Number.isFinite(n) ? n : fallback
 }
 
@@ -71,32 +66,30 @@ function MortgageCalculator() {
   const [showAmortization, setShowAmortization] = useState(false)
   const [amortizationData, setAmortizationData] = useState(null)
 
-  // Re-apply URL only when it contains loan inputs (avoid wiping saved data for ?shared=… only)
+  // URL wins when present; otherwise normalize legacy saved shapes once on mount.
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
-    if (!params.has('principal') && !params.has('rate') && !params.has('years')) return
-    const urlInputs = {
-      principal: params.get('principal') ? parseFloat(params.get('principal')) : 300000,
-      annualRate: params.get('rate') ? parseFloat(params.get('rate')) : 4.0,
-      years: params.get('years') ? parseFloat(params.get('years')) : 30,
-      propertyTax: params.get('propertyTax') ? parseFloat(params.get('propertyTax')) : 0,
-      homeInsurance: params.get('homeInsurance') ? parseFloat(params.get('homeInsurance')) : 0,
-      pmi: params.get('pmi') ? parseFloat(params.get('pmi')) : 0,
-      hoa: params.get('hoa') ? parseFloat(params.get('hoa')) : 0,
-      extraPayment: params.get('extraPayment') ? parseFloat(params.get('extraPayment')) : 0,
+    if (params.has('principal') || params.has('rate') || params.has('years')) {
+      const urlInputs = {
+        principal: params.get('principal') ? parseFloat(params.get('principal')) : 300000,
+        annualRate: params.get('rate') ? parseFloat(params.get('rate')) : 4.0,
+        years: params.get('years') ? parseFloat(params.get('years')) : 30,
+        propertyTax: params.get('propertyTax') ? parseFloat(params.get('propertyTax')) : 0,
+        homeInsurance: params.get('homeInsurance') ? parseFloat(params.get('homeInsurance')) : 0,
+        pmi: params.get('pmi') ? parseFloat(params.get('pmi')) : 0,
+        hoa: params.get('hoa') ? parseFloat(params.get('hoa')) : 0,
+        extraPayment: params.get('extraPayment') ? parseFloat(params.get('extraPayment')) : 0,
+      }
+      setInputs(normalizeMortgageInputs(urlInputs))
+    } else {
+      setInputs((prev) => normalizeMortgageInputs(prev))
     }
-    setInputs(normalizeMortgageInputs(urlInputs))
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
-  // Normalize older string-based localStorage values (e.g. "0150000" -> 150000).
-  useEffect(() => {
-    setInputs(prev => normalizeMortgageInputs(prev))
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const handleInputChange = (field, value) => {
-    const normalizedValue = normalizeNumber(value, 0)
+    const n = parseFloat(value)
+    const normalizedValue = Number.isFinite(n) ? n : 0
     setInputs(prev => {
       const updated = { ...prev, [field]: normalizedValue }
       return updated
