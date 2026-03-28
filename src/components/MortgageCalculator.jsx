@@ -5,52 +5,11 @@ import PaymentBreakdownChart from './PaymentBreakdownChart'
 import { useLocalStorage } from '../hooks/useLocalStorage'
 import { copyToClipboard, generateShareUrl, getSharedLinkDateParam } from '../utils/share'
 import { formatCurrency, formatInteger } from '../utils/formatCurrency'
+import { mortgageInputsFromSearchParams, normalizeMortgageInputs } from '../utils/mortgageInputs'
 import './MortgageCalculator.css'
 
-/** Coerce URL/localStorage values to numbers (handles legacy string values). */
-const normalizeNumber = (value, fallback = 0) => {
-  const n = typeof value === 'string' ? parseFloat(value) : Number(value)
-  return Number.isFinite(n) ? n : fallback
-}
-
-const normalizeMortgageInputs = (raw) => ({
-  principal: normalizeNumber(raw.principal, 300000),
-  annualRate: normalizeNumber(raw.annualRate, 4.0),
-  years: normalizeNumber(raw.years, 30),
-  propertyTax: normalizeNumber(raw.propertyTax, 0),
-  homeInsurance: normalizeNumber(raw.homeInsurance, 0),
-  pmi: normalizeNumber(raw.pmi, 0),
-  hoa: normalizeNumber(raw.hoa, 0),
-  extraPayment: normalizeNumber(raw.extraPayment, 0),
-})
-
 function MortgageCalculator() {
-  // Load from URL params or localStorage
-  const getInitialInputs = () => {
-    const params = new URLSearchParams(window.location.search)
-    const urlInputs = {
-      principal: params.get('principal') ? parseFloat(params.get('principal')) : null,
-      annualRate: params.get('rate') ? parseFloat(params.get('rate')) : null,
-      years: params.get('years') ? parseFloat(params.get('years')) : null,
-      propertyTax: params.get('propertyTax') ? parseFloat(params.get('propertyTax')) : null,
-      homeInsurance: params.get('homeInsurance') ? parseFloat(params.get('homeInsurance')) : null,
-      pmi: params.get('pmi') ? parseFloat(params.get('pmi')) : null,
-      hoa: params.get('hoa') ? parseFloat(params.get('hoa')) : null,
-      extraPayment: params.get('extraPayment') ? parseFloat(params.get('extraPayment')) : null,
-    }
-    
-    // Use URL params if available, otherwise use defaults
-    return normalizeMortgageInputs({
-      principal: urlInputs.principal ?? 300000,
-      annualRate: urlInputs.annualRate ?? 4.0,
-      years: urlInputs.years ?? 30,
-      propertyTax: urlInputs.propertyTax ?? 0,
-      homeInsurance: urlInputs.homeInsurance ?? 0,
-      pmi: urlInputs.pmi ?? 0,
-      hoa: urlInputs.hoa ?? 0,
-      extraPayment: urlInputs.extraPayment ?? 0,
-    })
-  }
+  const getInitialInputs = () => mortgageInputsFromSearchParams(window.location.search)
 
   const [inputs, setInputs] = useLocalStorage('mortgage-inputs', getInitialInputs, {
     preferUrlParams: () => {
@@ -70,17 +29,7 @@ function MortgageCalculator() {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
     if (params.has('principal') || params.has('rate') || params.has('years')) {
-      const urlInputs = {
-        principal: params.get('principal') ? parseFloat(params.get('principal')) : 300000,
-        annualRate: params.get('rate') ? parseFloat(params.get('rate')) : 4.0,
-        years: params.get('years') ? parseFloat(params.get('years')) : 30,
-        propertyTax: params.get('propertyTax') ? parseFloat(params.get('propertyTax')) : 0,
-        homeInsurance: params.get('homeInsurance') ? parseFloat(params.get('homeInsurance')) : 0,
-        pmi: params.get('pmi') ? parseFloat(params.get('pmi')) : 0,
-        hoa: params.get('hoa') ? parseFloat(params.get('hoa')) : 0,
-        extraPayment: params.get('extraPayment') ? parseFloat(params.get('extraPayment')) : 0,
-      }
-      setInputs(normalizeMortgageInputs(urlInputs))
+      setInputs(mortgageInputsFromSearchParams(params))
     } else {
       setInputs((prev) => normalizeMortgageInputs(prev))
     }
