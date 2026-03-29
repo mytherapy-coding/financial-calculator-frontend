@@ -75,8 +75,16 @@ src/
 │   ├── TVMCalculator.jsx          # TVM calculators
 │   ├── PaymentBreakdownChart.jsx  # Pie chart for payment breakdown
 │   └── AmortizationChart.jsx      # Line chart for amortization
+├── hooks/
+│   └── useLocalStorage.js   # Persist form state to localStorage
 ├── services/
 │   └── api.js              # API service layer
+├── utils/
+│   ├── finiteNumber.js     # Safe numeric coercion for forms / URLs
+│   ├── mortgageInputs.js # Mortgage defaults and URL parsing
+│   ├── tvmInputs.js        # TVM defaults and URL parsing
+│   ├── formatCurrency.js
+│   └── share.js            # Share links and clipboard
 ├── App.jsx                 # Main app component
 └── main.jsx                # Entry point
 ```
