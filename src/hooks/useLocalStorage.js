@@ -25,7 +25,14 @@ export function useLocalStorage(key, initialValue, options = {}) {
         return fromUrl
       }
       const item = window.localStorage.getItem(key)
-      if (item) return JSON.parse(item)
+      if (item) {
+        try {
+          return JSON.parse(item)
+        } catch {
+          console.warn(`Invalid JSON in localStorage for ${key}; resetting to defaults`)
+          return resolveInitial()
+        }
+      }
       return resolveInitial()
     } catch (error) {
       console.error(`Error loading ${key} from localStorage:`, error)
