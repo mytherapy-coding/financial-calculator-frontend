@@ -81,7 +81,7 @@ src/
 │   └── api.js              # API service layer
 ├── utils/
 │   ├── finiteNumber.js     # Safe numeric coercion for forms / URLs
-│   ├── mortgageInputs.js # Mortgage defaults and URL parsing
+│   ├── mortgageInputs.js   # Mortgage defaults and URL parsing
 │   ├── tvmInputs.js        # TVM defaults and URL parsing
 │   ├── formatCurrency.js
 │   └── share.js            # Share links and clipboard
