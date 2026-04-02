@@ -14,7 +14,7 @@ Modern, responsive web app for running common personal finance calculations (mor
 
 ### Prerequisites
 
-- Node.js 16+ and npm
+- Node.js 18+ and npm (matches CI and `npm run verify:calculations`)
 
 ### Installation
 
