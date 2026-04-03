@@ -247,6 +247,7 @@ function MortgageCalculator() {
 
           <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
             <button
+              type="button"
               className="calculate-button"
               onClick={calculateMortgage}
               disabled={loading}
@@ -256,6 +257,7 @@ function MortgageCalculator() {
             </button>
             {results && (
               <button
+                type="button"
                 className="share-button"
                 onClick={handleShare}
                 title="Share: copy a link with your inputs and today’s date"
@@ -337,6 +339,7 @@ function MortgageCalculator() {
               </div>
 
               <button
+                type="button"
                 className="toggle-button"
                 onClick={loadAmortizationSchedule}
                 disabled={loading}

@@ -172,6 +172,7 @@ function TVMCalculator() {
       <div className="calculator-container">
         <div className="calc-tabs">
           <button
+            type="button"
             className={`calc-tab ${activeCalc === 'future-value' ? 'active' : ''}`}
             onClick={() => {
               setActiveCalc('future-value')
@@ -182,6 +183,7 @@ function TVMCalculator() {
             Future Value
           </button>
           <button
+            type="button"
             className={`calc-tab ${activeCalc === 'present-value' ? 'active' : ''}`}
             onClick={() => {
               setActiveCalc('present-value')
@@ -192,6 +194,7 @@ function TVMCalculator() {
             Present Value
           </button>
           <button
+            type="button"
             className={`calc-tab ${activeCalc === 'annuity-payment' ? 'active' : ''}`}
             onClick={() => {
               setActiveCalc('annuity-payment')
@@ -364,6 +367,7 @@ function TVMCalculator() {
 
           <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
             <button
+              type="button"
               className="calculate-button"
               onClick={calculate}
               disabled={loading}
@@ -373,6 +377,7 @@ function TVMCalculator() {
             </button>
             {results && (
               <button
+                type="button"
                 className="share-button"
                 onClick={handleShare}
                 title="Share: copy a link with your inputs and today’s date"
