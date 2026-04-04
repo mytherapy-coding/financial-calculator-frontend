@@ -159,7 +159,7 @@ Each component imports its own CSS file (plain CSS, not CSS Modules). The design
 
 - **API errors or failed calculations**: Confirm the API is reachable (default: hosted on Render). To run against a local backend, start [`financial-calculations-api`](https://github.com/mytherapy-coding/financial-calculations-api) and set `VITE_API_BASE=http://localhost:8000` in `.env`, then restart `npm run dev`.
 - **CORS errors in the browser**: The backend must allow your frontend origin (e.g. `http://localhost:3000` or your GitHub Pages URL). Configure CORS on the API, not in this repo.
-- **Preview production build locally**: After `npm run build`, run `npm run preview` to test the `dist` output.
+- **Preview production build locally**: After `npm run build`, run `npm run preview` to test the `dist` output. Use the printed URL (for this repo’s `base`, it includes `/financial-calculator-frontend/`).
 
 ## Deployment
 
