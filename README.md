@@ -68,6 +68,8 @@ const API_BASE = import.meta.env.VITE_API_BASE || 'https://financial-calculation
 
 ```
 src/
+├── constants/
+│   └── tvm.js              # TVM `calc` modes for URL / tab detection
 ├── components/
 │   ├── Header.jsx          # App header
 │   ├── Navigation.jsx       # Tab navigation

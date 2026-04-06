@@ -3,14 +3,17 @@ import Header from './components/Header'
 import Navigation from './components/Navigation'
 import MortgageCalculator from './components/MortgageCalculator'
 import TVMCalculator from './components/TVMCalculator'
+import { isTvmCalcParam } from './constants/tvm'
 import './App.css'
 
 function App() {
   // Load active tab from URL or default to mortgage
   const getInitialTab = () => {
     const params = new URLSearchParams(window.location.search)
-    const tab = params.get('tab')
-    return tab === 'tvm' ? 'tvm' : 'mortgage'
+    if (params.get('tab') === 'tvm') return 'tvm'
+    // Shared TVM links must include tab=tvm, but older/manual links may only set calc=…
+    if (isTvmCalcParam(params.get('calc'))) return 'tvm'
+    return 'mortgage'
   }
 
   const [activeTab, setActiveTab] = useState(getInitialTab())

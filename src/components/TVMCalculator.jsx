@@ -4,6 +4,7 @@ import { useLocalStorage } from '../hooks/useLocalStorage'
 import { copyToClipboard, generateShareUrl, getSharedLinkDateParam } from '../utils/share'
 import { formatCurrency } from '../utils/formatCurrency'
 import { tvmInputsFromSearchParams } from '../utils/tvmInputs'
+import { TVM_CALC_MODES } from '../constants/tvm'
 import './TVMCalculator.css'
 
 const TVM_ACTIVE_CALC_KEY = 'tvm-active-calc'
@@ -12,12 +13,12 @@ function TVMCalculator() {
   const getInitialCalc = () => {
     const params = new URLSearchParams(window.location.search)
     const fromUrl = params.get('calc')
-    if (fromUrl && ['future-value', 'present-value', 'annuity-payment'].includes(fromUrl)) {
+    if (fromUrl && TVM_CALC_MODES.includes(fromUrl)) {
       return fromUrl
     }
     try {
       const saved = localStorage.getItem(TVM_ACTIVE_CALC_KEY)
-      if (saved && ['future-value', 'present-value', 'annuity-payment'].includes(saved)) {
+      if (saved && TVM_CALC_MODES.includes(saved)) {
         return saved
       }
     } catch {
@@ -58,7 +59,7 @@ function TVMCalculator() {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
     const calcFromUrl = params.get('calc')
-    if (calcFromUrl && ['future-value', 'present-value', 'annuity-payment'].includes(calcFromUrl)) {
+    if (calcFromUrl && TVM_CALC_MODES.includes(calcFromUrl)) {
       setActiveCalc(calcFromUrl)
     }
     const hasSharedTvm =
