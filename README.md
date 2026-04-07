@@ -36,6 +36,15 @@ npm run build
 
 The built files will be in the `dist` directory.
 
+### NPM scripts
+
+| Command | Purpose |
+|--------|---------|
+| `npm run dev` | Dev server (default port **3000**, see `vite.config.js`) |
+| `npm run build` | Production build → `dist/` |
+| `npm run preview` | Serve `dist/` locally (URL includes `/financial-calculator-frontend/` in production mode) |
+| `npm run verify:calculations` | Sanity-check reference formulas; use `VERIFY_API=1` to assert the live API |
+
 ### Verify Calculations (sanity checks)
 
 This repo includes a lightweight script that spot-checks a couple reference financial formulas (mortgage payment + compound future value).
@@ -67,12 +76,17 @@ const API_BASE = import.meta.env.VITE_API_BASE || 'https://financial-calculation
 ## Project Structure
 
 ```
+├── index.html              # App shell (Vite; favicon uses %BASE_URL%)
+├── public/                 # Static assets copied to dist root (e.g. vite.svg)
+├── scripts/
+│   └── verify-calculations.mjs  # Reference formula checks (see npm script)
+├── vite.config.js          # base path for GitHub Pages, dev server port
 src/
 ├── constants/
 │   └── tvm.js              # TVM `calc` modes for URL / tab detection
 ├── components/
 │   ├── Header.jsx          # App header
-│   ├── Navigation.jsx       # Tab navigation
+│   ├── Navigation.jsx      # Tab navigation
 │   ├── MortgageCalculator.jsx    # Main mortgage calculator
 │   ├── TVMCalculator.jsx          # TVM calculators
 │   ├── PaymentBreakdownChart.jsx  # Pie chart for payment breakdown
@@ -102,6 +116,12 @@ src/
   - Choose Future Value, Present Value, or Annuity Payment.
   - Fill in the known inputs (rate, periods, payment/amount) and calculate the missing value.
   - Use this to compare savings plans, loan offers, or investment scenarios.
+
+### Sharing and URLs
+
+- **Share** copies a link with your inputs and a `shared` timestamp. Opening the link restores inputs; form state is also persisted in **localStorage** for the same origin.
+- **Mortgage** shared links include `principal`, `rate`, `years`, and optional escrow fields where set.
+- **TVM** shared links include `tab=tvm`, `calc`, and the relevant fields. If `tab=tvm` is missing but **`calc`** is a valid mode (`future-value`, `present-value`, `annuity-payment`), the app still opens the **TVM** tab.
 
 ## Features in Detail
 
@@ -146,7 +166,8 @@ This frontend integrates with the [`financial-calculations-api`](https://github.
 1. Create a new component in `src/components/`
 2. Add API methods in `src/services/api.js`
 3. Add navigation tab in `src/components/Navigation.jsx`
-4. Include in `src/App.jsx`
+4. Wire the tab in `src/App.jsx` (URL `tab=` param if you use query-based navigation)
+5. Add URL parsing helpers in `src/utils/` and any shared constants under `src/constants/` when needed
 
 ### Styling
 
