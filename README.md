@@ -42,12 +42,12 @@ The built files will be in the `dist` directory.
 |--------|---------|
 | `npm run dev` | Dev server (default port **3000**, see `vite.config.js`) |
 | `npm run build` | Production build → `dist/` |
-| `npm run preview` | Serve `dist/` locally (URL includes `/financial-calculator-frontend/` in production mode) |
+| `npm run preview` | After `npm run build`, serve `dist/` locally; open the printed URL (includes `/financial-calculator-frontend/` for this repo’s `base`) |
 | `npm run verify:calculations` | Sanity-check reference formulas; use `VERIFY_API=1` to assert the live API |
 
 ### Verify Calculations (sanity checks)
 
-This repo includes a lightweight script that spot-checks a couple reference financial formulas (mortgage payment + compound future value).
+See the **`verify:calculations`** row in the **NPM scripts** table above. The script spot-checks reference formulas (mortgage payment + compound future value).
 
 ```bash
 # Verify reference formulas locally (no network)
@@ -92,7 +92,7 @@ src/
 │   ├── PaymentBreakdownChart.jsx  # Pie chart for payment breakdown
 │   └── AmortizationChart.jsx      # Line chart for amortization
 ├── hooks/
-│   └── useLocalStorage.js   # Persist form state to localStorage
+│   └── useLocalStorage.js  # Persist form state to localStorage
 ├── services/
 │   └── api.js              # API service layer
 ├── utils/
