@@ -75,7 +75,8 @@ function TVMCalculator() {
     setInputs(prev => {
       // Handle select dropdowns (compoundsPerYear, paymentsPerYear) as integers
       if (field === 'compoundsPerYear' || field === 'paymentsPerYear') {
-        return { ...prev, [field]: parseInt(value) || 0 }
+        const n = parseInt(value, 10)
+        return { ...prev, [field]: Number.isFinite(n) ? Math.max(1, n) : 1 }
       }
       // Handle number inputs
       const n = parseFloat(value)
