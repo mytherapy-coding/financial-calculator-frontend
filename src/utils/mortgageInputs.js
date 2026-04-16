@@ -18,8 +18,10 @@ export function mortgageInputsFromSearchParams(searchParams) {
   const p = searchParams instanceof URLSearchParams ? searchParams : new URLSearchParams(searchParams)
   const getNum = (key) => {
     const v = p.get(key)
-    if (v == null || v === '') return undefined
-    return parseFloat(v)
+    if (v == null) return undefined
+    const t = v.trim()
+    if (t === '') return undefined
+    return parseFloat(t)
   }
   return normalizeMortgageInputs({
     principal: getNum('principal'),

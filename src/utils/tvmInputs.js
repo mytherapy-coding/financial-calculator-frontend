@@ -17,13 +17,17 @@ export function tvmInputsFromSearchParams(searchParams) {
   const p = searchParams instanceof URLSearchParams ? searchParams : new URLSearchParams(searchParams)
   const getFloat = (key) => {
     const v = p.get(key)
-    if (v == null || v === '') return undefined
-    return parseFloat(v)
+    if (v == null) return undefined
+    const t = v.trim()
+    if (t === '') return undefined
+    return parseFloat(t)
   }
   const getInt = (key) => {
     const v = p.get(key)
-    if (v == null || v === '') return undefined
-    return parseInt(v, 10)
+    if (v == null) return undefined
+    const t = v.trim()
+    if (t === '') return undefined
+    return parseInt(t, 10)
   }
   return normalizeTvmInputs({
     principal: getFloat('principal'),
