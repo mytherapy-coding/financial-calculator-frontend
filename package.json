@@ -1,7 +1,12 @@
 {
   "name": "financial-calculator-frontend",
   "version": "1.0.0",
+  "description": "Mortgage and time-value-of-money calculators built with React, Vite, and Recharts.",
   "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mytherapy-coding/financial-calculator-frontend.git"
+  },
   "engines": {
     "node": ">=18"
   },
